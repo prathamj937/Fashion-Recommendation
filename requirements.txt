@@ -1,0 +1,8 @@
+flask
+opencv-python
+numpy
+flask-mysqldb
+mysqlclient
+razorpay
+itsdangerous
+flask-mail

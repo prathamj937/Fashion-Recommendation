@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product.name }} - Product Details</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    
+    <style>
+        body {
+            /* background-image: url('https://images8.alphacoders.com/132/thumb-1920-1323371.png'); */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+
+        h1 {
+            color: #1F2937;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .product-container {
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .product-image {
+            flex: 1;
+            margin-right: 20px;
+        }
+
+        .product-image img {
+            max-width: 100%;
+            border-radius: 12px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .product-image:hover img {
+            transform: scale(1.1);
+        }
+
+        .product-details {
+            flex: 1;
+            color: #1F2937;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-price {
+            color: #3B82F6;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .product-description {
+            margin-top: 20px;
+        }
+
+        .buy-button,
+        .cart-button {
+            background-color: #3B82F6;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-align: center;
+            display: inline-block;
+            margin-top: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .cart-button {
+            background-color: #10B981;
+        }
+
+        .buy-button:hover {
+            background-color: #2563EB;
+        }
+
+        .cart-button:hover {
+            background-color: #059669;
+        }
+
+        .cart-and-buy {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .back-to-recommendations {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .back-to-recommendations a {
+            color: #1F2937;
+            text-decoration: underline;
+            font-weight: bold;
+        }
+
+        .quantity-selector {
+            margin-top: 10px;
+        }
+
+        .quantity-selector label {
+            font-weight: bold;
+        }
+
+        .size-guide {
+            color: #3B82F6;
+            text-decoration: underline;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .reviews {
+            margin-top: 30px;
+            border-top: 1px solid #E5E7EB;
+            padding-top: 20px;
+        }
+
+        .review {
+            margin-bottom: 10px;
+        }
+
+        .rating {
+            color: #FBBF24;
+        }
+
+        .features {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .features div {
+            text-align: center;
+            width: 30%;
+        }
+
+        .features img {
+            width: 40px;
+            margin-bottom: 8px;
+        }
+
+        .features p {
+            font-weight: bold;
+            color: #374151;
+        }
+
+        /* Footer Styles */
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            color: #ffffff;
+            font-size: 0.875rem;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.6);
+        }
+    </style>
+</head>
+<body>
+    <div class="container mx-auto mt-10">
+        <h1 class="text-4xl font-bold">{{ product.name }}</h1>
+
+        <div class="product-container">
+            <div class="product-image">
+                {% if product.image %}
+                    <img src="{{ product.image }}" alt="{{ product.name }}">
+                {% else %}
+                    <div class="w-full h-48 bg-gray-200 flex justify-center items-center">
+                        <span>No Image Available</span>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="product-details">
+                <p class="product-price">${{ product.price }}</p>
+                <p><strong>Material:</strong> {{ product.material or 'Not specified' }}</p>
+                <p><strong>Size:</strong> {{ product.size or 'One Size' }} </p>
+
+                <div class="product-description">
+                    <p>Get this stylish and comfortable {{ product.name }} today!</p>
+                </div>
+
+                <div class="quantity-selector">
+                    <label for="quantity">Quantity:</label>
+                    <input type="number" id="quantity" name="quantity" min="1" max="10" value="1" class="border border-gray-300 rounded p-2">
+                </div>
+
+                <div class="cart-and-buy">
+                    <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="POST">
+                        <button type="submit" class="cart-button">Add to Cart</button>
+                    </form>
+                    <form action="{{ url_for('buy_now', product_id=product.id) }}" method="POST">
+                        <button type="submit" class="buy-button">Buy Now</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="reviews">
+            <h2 class="text-2xl font-semibold">Customer Reviews</h2>
+            <div class="review">
+                <p class="rating">★★★★★</p>
+                <p><strong>Pratham Jain:</strong> Great product! Very comfortable and stylish.</p>
+            </div>
+            <div class="review">
+                <p class="rating">★★★★☆</p>
+                <p><strong>Kamlesh Saini:</strong> Love it! Fits well, but took a while to arrive.</p>
+            </div>
+        </div>
+
+        <div class="back-to-recommendations">
+            <a href="{{ url_for('recommendations') }}">Back to Recommendations</a>
+        </div>
+    </div>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="flash-message">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                <span>{{ messages[0] }}</span>
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <footer class="footer">
+        &copy; 2024 FashionFusion. All rights reserved.
+    </footer>
+</body>
+</html>

@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Your Picture for Analysis</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    
+    <style>
+        body {
+            /* background-image: url('https://images8.alphacoders.com/132/thumb-1920-1323371.png'); */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 30px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            position: relative;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        h1 {
+            color: #1E3A8A;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+            font-size: 2.5rem;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            animation: slideInDown 0.8s ease-out;
+        }
+
+        button {
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            padding: 10px 20px;
+        }
+
+        button:hover {
+            background-color: #2563EB;
+            transform: translateY(-3px);
+        }
+
+        input[type="file"] {
+            border: 2px dashed #9CA3AF;
+            border-radius: 8px;
+            padding: 15px;
+            width: 100%;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        input[type="file"]:hover {
+            background-color: #E5E7EB;
+            border-color: #1E3A8A;
+        }
+
+        input[type="file"]::file-selector-button {
+            color: #1E3A8A;
+            border: none;
+            background: transparent;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        #resultsContainer {
+            background-color: #F9FAFB;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        #resultsContainer p {
+            color: #374151;
+            font-size: 1.25rem;
+            margin-bottom: 10px;
+        }
+
+        .logout-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: #F3F4F6;
+            padding: 10px 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .logout-container:hover {
+            background-color: #E5E7EB;
+            transform: translateY(-2px);
+        }
+
+        .logout-link {
+            color: #DC2626;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .logout-link:hover {
+            color: #B91C1C;
+        }
+
+        #imagePreview {
+            max-width: 300px;
+            max-height: 300px;
+            margin-top: 20px;
+            border-radius: 8px;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .spinner {
+            display: none;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin-top: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes slideInDown {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        footer {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 15px;
+            text-align: center;
+            margin-top: auto;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        footer p {
+            color: #4B5563;
+        }
+
+        footer a {
+            color: #3B82F6;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mx-auto mt-10">
+        <div class="logout-container">
+            <a href="{{ url_for('logout') }}" class="logout-link">Logout</a>
+        </div>
+
+        <h1 class="text-3xl font-bold text-center">Upload Your Picture for Hair, Body, and Face Analysis</h1>
+
+        <div class="text-center text-gray-600 mt-4">
+            <p>Please upload a clear, front-facing picture of your face and body. Make sure there’s enough light for better results.</p>
+            <p>Supported formats: PNG, JPG, JPEG. Maximum file size: 5MB.</p>
+        </div>
+
+        <form id="uploadForm" action="/home" method="POST" enctype="multipart/form-data" class="mt-8 flex flex-col items-center">
+            <input type="file" id="imageInput" name="image" accept="image/*" required class="mb-4">
+            <img id="imagePreview" alt="Image Preview">
+            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg mt-4">Analyze Picture</button>
+            <div class="spinner" id="spinner"></div>
+        </form>
+
+        {% if hair_type and face_shape and body_shape %}
+        <div id="resultsContainer" class="mt-8">
+            <h2 class="text-2xl font-semibold">Analysis Results</h2>
+            <p class="mt-2">Hair Type: {{ hair_type }}</p>
+            <p class="mt-2">Face Shape: {{ face_shape }}</p>
+            <p class="mt-2">Body Shape: {{ body_shape }}</p>
+        </div>
+        <div class="mt-6 text-center">
+            <a href="{{ url_for('recommendations') }}" class="bg-green-500 text-white px-6 py-2 rounded-lg">
+                Get Recommendations
+            </a>
+        </div>
+        {% endif %}
+    </div>
+
+    <footer>
+        <p>&copy; 2024 FashionFusion. All rights reserved.</p>
+        <p><a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+    </footer>
+
+    <script>
+        const imageInput = document.getElementById('imageInput');
+        const imagePreview = document.getElementById('imagePreview');
+        const uploadForm = document.getElementById('uploadForm');
+        const spinner = document.getElementById('spinner');
+
+        imageInput.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.src = e.target.result;
+                    imagePreview.style.display = 'block';
+                    imagePreview.style.opacity = '1';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                imagePreview.style.display = 'none';
+                imagePreview.style.opacity = '0';
+            }
+        });
+
+        uploadForm.addEventListener('submit', function() {
+            spinner.style.display = 'block';
+        });
+    </script>
+</body>
+</html>

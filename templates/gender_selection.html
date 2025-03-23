@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Gender</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            /* background-image: url(''); */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            font-family: 'Inter', sans-serif;
+            animation: fadeIn 1.5s ease-in-out;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 40px;
+            background-color: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            margin-top: 10%;
+            transform: translateY(100px);
+            animation: slideUp 0.8s ease forwards;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: bold;
+            text-align: center;
+            color: #1F2937;
+            margin-bottom: 20px;
+            animation: fadeInText 1s ease-in-out;
+        }
+
+        @keyframes fadeInText {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .gender-option img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .gender-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .gender-option input[type="radio"]:checked + img {
+            border: 3px solid #3B82F6; /* Blue border when selected */
+            transform: scale(1.05);
+        }
+
+        footer {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 15px;
+            text-align: center;
+            margin-top: 30px;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        footer p, footer a {
+            color: #4B5563;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        .button-link {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        .button-link:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Button to Go Back to Shop -->
+    <nav class="p-4">
+        <ul class="flex justify-start">
+            <li><a href="../website/home.html" class="button-link">Back to Shop</a></li>
+        </ul>
+    </nav>
+
+    <!-- Gender Selection Form Container -->
+    <div class="container">
+        <h1>Select Your Gender</h1>
+        <form method="POST" action="{{ url_for('gender_selection') }}">
+            <div class="flex justify-around mt-4">
+                <!-- Male Option -->
+                <label for="male" class="gender-option flex flex-col items-center cursor-pointer">
+                    <input type="radio" name="gender" value="Male" id="male" required>
+                    <img src="https://tse2.mm.bing.net/th?id=OIP.QkgPlqhbSYF1jP8na6pwuQHaJQ&pid=Api&P=0&h=180" alt="Male">
+                    <span class="mt-2 text-gray-700 font-medium">Male</span>
+                </label>
+
+                <!-- Female Option -->
+                <label for="female" class="gender-option flex flex-col items-center cursor-pointer">
+                    <input type="radio" name="gender" value="Female" id="female" required>
+                    <img src="https://tse3.mm.bing.net/th?id=OIP.yCHVgwUADZNn4XhuBuuQ9AHaHa&pid=Api&P=0&h=180" alt="Female">
+                    <span class="mt-2 text-gray-700 font-medium">Female</span>
+                </label>
+            </div>
+            <!-- Submit Button -->
+            <button type="submit" class="mt-6 w-full py-2 bg-blue-500 hover:bg-blue-700 text-white font-bold rounded-lg">Submit</button>
+        </form>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 FashionFusion. All rights reserved.</p>
+        <p><a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+    </footer>
+</body>
+</html>

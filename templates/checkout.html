@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        /* Background and fonts */
+        body {
+            /* background-image: url('https://images8.alphacoders.com/132/thumb-1920-1323371.png'); */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Checkout container styling */
+        .checkout-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+
+        /* Checkout item styling */
+        .checkout-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e5e7eb;
+            transition: transform 0.3s ease;
+        }
+
+        .checkout-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .checkout-item img {
+            max-width: 100px;
+            border-radius: 8px;
+            transition: transform 0.3s ease;
+        }
+
+        .checkout-item img:hover {
+            transform: scale(1.05);
+        }
+
+        .checkout-item-info {
+            flex: 1;
+            margin-left: 20px;
+        }
+
+        .checkout-item-price {
+            font-weight: bold;
+            color: #1F2937;
+        }
+
+        /* Total and checkout button */
+        .checkout-total {
+            text-align: right;
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-top: 20px;
+            opacity: 0;
+            animation: fadeIn 1s ease-out 0.4s forwards;
+        }
+
+        .checkout-btn {
+            background-color: #10B981;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            margin-top: 20px;
+            display: block;
+            width: 100%;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            opacity: 0;
+            animation: fadeIn 1s ease-out 0.6s forwards;
+        }
+
+        .checkout-btn:hover {
+            background-color: #059669;
+            transform: translateY(-3px);
+        }
+
+        /* Keyframe animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container mx-auto mt-10">
+        <div class="checkout-container">
+            <h1 class="text-3xl font-bold mb-4">Checkout</h1>
+
+            <!-- Checkout Items -->
+            {% for item in items %}
+                <div class="checkout-item">
+                    <img src="{{ item['image'] or 'https://via.placeholder.com/100' }}" alt="{{ item['name'] }}">
+                    <div class="checkout-item-info">
+                        <h2 class="text-lg font-semibold">{{ item['name'] }}</h2>
+                        <p class="checkout-item-price">${{ item['price'] }}</p>
+                        <p>Quantity: {{ item['quantity'] }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+
+            <!-- Total and Checkout -->
+            <div class="checkout-total">
+                Total: ${{ "%.2f"|format(total) }}
+            </div>
+
+            <a href="{{ url_for('address') }}" class="checkout-btn">Place Order</a>
+        </div>
+    </div>
+</body>
+</html>

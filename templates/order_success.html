@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Success</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+    <style>
+        #spinner {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100vw;
+            background-color: rgba(255, 255, 255, 0.9);
+            position: fixed;
+            z-index: 10000;
+        }
+
+        .spinner-circle {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #10B981;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        body {
+            /* background-image: url('https://images8.alphacoders.com/132/thumb-1920-1323371.png'); */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            font-family: 'Inter', sans-serif;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 100px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transform: translateY(20px);
+            opacity: 0;
+            transition: transform 0.8s ease, opacity 0.8s ease;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #10B981;
+        }
+
+        p {
+            font-size: 1.25rem;
+            margin-top: 10px;
+            color: #374151;
+        }
+
+        .btn {
+            background-color: #3B82F6;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+            font-size: 1rem;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #2563EB;
+            transform: translateY(-3px);
+        }
+
+        .chatbot-icon {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #10B981;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .chatbot-icon:hover {
+            background-color: #059669;
+            transform: scale(1.1);
+        }
+
+        .chatbot-container {
+            display: none;
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 300px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .chatbot-header {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #1F2937;
+            margin-bottom: 10px;
+        }
+
+        .chatbot-body {
+            height: 200px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+        }
+
+        .faq-question {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .faq-answer {
+            margin-bottom: 15px;
+            color: #374151;
+        }
+
+        .chatbot-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .chatbot-input-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .chatbot-input {
+            width: 80%;
+            padding: 10px;
+            border: 1px solid #E5E7EB;
+            border-radius: 6px;
+            margin-right: 10px;
+        }
+
+        .chatbot-send-btn {
+            background-color: #10B981;
+            color: white;
+            padding: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .chatbot-send-btn:hover {
+            background-color: #059669;
+        }
+
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            color: #ffffff;
+            font-size: 0.875rem;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.6);
+        }
+    </style>
+</head>
+<body>
+    <div id="spinner">
+        <div class="spinner-circle"></div>
+    </div>
+
+    <div class="container">
+        <h1>Thank You for Your Purchase!</h1>
+        <p>Your order has been successfully placed.</p>
+        <p>We appreciate your business and hope you enjoy your purchase.</p>
+
+        <a href="{{ url_for('login') }}" class="btn">Exit</a>
+    </div>
+
+    <div class="chatbot-icon" id="chatbotIcon">
+        💬
+    </div>
+
+    <div class="chatbot-container" id="chatbotContainer">
+        <div class="chatbot-close" id="chatbotClose">✖</div>
+        <div class="chatbot-header">FAQ Chatbot</div>
+        <div class="chatbot-body" id="chatbotBody"></div>
+
+        <div class="chatbot-input-container">
+            <input type="text" id="chatbotInput" class="chatbot-input" placeholder="Ask a question...">
+            <button id="chatbotSendBtn" class="chatbot-send-btn">Send</button>
+        </div>
+    </div>
+
+    <footer class="footer">
+        &copy; 2024 FashionFusion. All rights reserved.
+    </footer>
+
+    <script>
+        const spinner = document.getElementById('spinner');
+        const body = document.querySelector('body');
+        const container = document.querySelector('.container');
+        const chatbotIcon = document.getElementById('chatbotIcon');
+        const chatbotContainer = document.getElementById('chatbotContainer');
+        const chatbotClose = document.getElementById('chatbotClose');
+        const chatbotBody = document.getElementById('chatbotBody');
+        const chatbotInput = document.getElementById('chatbotInput');
+        const chatbotSendBtn = document.getElementById('chatbotSendBtn');
+
+        const faqData = [
+            { question: "When will my order arrive?", answer: "Orders typically arrive within 5-7 business days." },
+            { question: "How do I track my order?", answer: "You can track your order using the tracking number provided in the confirmation email." },
+            { question: "Can I change or cancel my order?", answer: "Yes, you can change or cancel your order within 24 hours of placing it." },
+            { question: "What is your return policy?", answer: "We offer a 7-day return policy on all items." }
+        ];
+
+        window.addEventListener('load', () => {
+            spinner.style.display = 'none';
+            body.style.opacity = '1';
+            container.style.transform = 'translateY(0)';
+            container.style.opacity = '1';
+        });
+
+        chatbotIcon.addEventListener('click', () => {
+            chatbotContainer.style.display = 'block';
+            chatbotContainer.style.opacity = '1';
+        });
+
+        chatbotClose.addEventListener('click', () => {
+            chatbotContainer.style.opacity = '0';
+            setTimeout(() => {
+                chatbotContainer.style.display = 'none';
+            }, 300);
+        });
+
+        function findAnswer(question) {
+            const lowerCaseQuestion = question.toLowerCase();
+            const faq = faqData.find(faq => lowerCaseQuestion.includes(faq.question.toLowerCase()));
+            return faq ? faq.answer : "I'm sorry, I don't have an answer for that. Please check our FAQs.";
+        }
+
+        function displayMessage(message, isUser = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.textContent = message;
+            messageDiv.style.fontWeight = isUser ? 'bold' : 'normal';
+            messageDiv.style.marginBottom = '10px';
+            chatbotBody.appendChild(messageDiv);
+            chatbotBody.scrollTop = chatbotBody.scrollHeight;
+        }
+
+        chatbotSendBtn.addEventListener('click', () => {
+            const userQuestion = chatbotInput.value.trim();
+            if (userQuestion) {
+                displayMessage(userQuestion, true);
+                const answer = findAnswer(userQuestion);
+                displayMessage(answer);
+                chatbotInput.value = '';
+            }
+        });
+
+        chatbotInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                chatbotSendBtn.click();
+            }
+        });
+    </script>
+</body>
+</html>

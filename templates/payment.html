@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Options</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            /* background-image: url('https://images8.alphacoders.com/132/thumb-1920-1323371.png'); */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            font-family: 'Inter', sans-serif;
+            opacity: 0;
+            animation: fadeIn 1s ease forwards;
+        }
+
+        /* Container styling */
+        .container {
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            transform: translateY(20px);
+            opacity: 0;
+            animation: slideUpFadeIn 0.8s ease forwards;
+        }
+
+        /* Heading styling */
+        .heading {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #1F2937;
+        }
+
+        /* Order summary section */
+        .order-summary {
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #F9FAFB;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            animation: fadeIn 1s ease forwards;
+        }
+
+        .order-summary h2 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .cart-item-name {
+            font-weight: bold;
+            color: #1F2937;
+        }
+
+        .cart-item-price {
+            color: #6B7280;
+        }
+
+        /* Total price section */
+        .cart-total {
+            text-align: right;
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-top: 10px;
+            color: #1F2937;
+        }
+
+        /* Payment option section */
+        .payment-options {
+            margin: 20px 0;
+        }
+
+        .pay-btn {
+            background-color: #10B981;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            margin-top: 20px;
+            display: block;
+            width: 100%;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            opacity: 0;
+            animation: fadeIn 1s ease 0.2s forwards;
+        }
+
+        .pay-btn:hover {
+            background-color: #059669;
+            transform: translateY(-3px);
+        }
+
+        /* Payment option box */
+        .payment-option {
+            background-color: #E5E7EB;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            margin-bottom: 15px;
+            opacity: 0;
+            animation: fadeIn 1s ease 0.3s forwards;
+        }
+
+        .payment-option:hover {
+            background-color: #D1D5DB;
+            transform: translateY(-5px);
+        }
+
+        /* UPI placeholder text */
+        .payment-placeholder {
+            color: #6B7280;
+        }
+
+        /* Keyframes for animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUpFadeIn {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="heading">Order Summary & Payment</h1>
+
+        <!-- Order Summary Section -->
+        <div class="order-summary">
+            <h2>Your Order</h2>
+
+            <!-- Loop through each item in the cart or single checkout item -->
+            {% if cart %}
+                {% for item in cart %}
+                <div class="cart-item">
+                    <span class="cart-item-name">{{ item['name'] }} (x{{ item['quantity'] }})</span>
+                    <span class="cart-item-price">${{ "%.2f"|format(item['price'] * item['quantity']) }}</span>
+                </div>
+                {% endfor %}
+            {% elif checkout_item %}
+                <div class="cart-item">
+                    <span class="cart-item-name">{{ checkout_item['name'] }} (x{{ checkout_item['quantity'] }})</span>
+                    <span class="cart-item-price">${{ "%.2f"|format(checkout_item['price'] * checkout_item['quantity']) }}</span>
+                </div>
+            {% else %}
+                <p>No items to display.</p>
+            {% endif %}
+
+            <!-- Total Price -->
+            <div class="cart-total">
+                Total: ${{ "%.2f"|format(total) }}
+            </div>
+        </div>
+
+        <!-- Payment Options -->
+        <div class="payment-options">
+            <!-- Razorpay Payment Option -->
+            <div class="payment-option">
+                <h2>Pay with Razorpay</h2>
+                <button id="razorpay-button" class="pay-btn">Pay with Razorpay</button>
+            </div>
+
+            <!-- PayPal Payment Option -->
+            <div class="payment-option">
+                <h2>Pay with PayPal</h2>
+                <!-- PayPal button container -->
+                <div id="paypal-button-container"></div>
+            </div>
+
+            <!-- Cash on Delivery Option -->
+            <div class="payment-option">
+                <h2>Cash on Delivery (COD)</h2>
+                <form action="{{ url_for('process_cod') }}" method="POST">
+                    <button type="submit" class="pay-btn">Place Order with COD</button>
+                </form>
+            </div>
+
+            <!-- Placeholder for UPI Payment Options -->
+            <div class="payment-option">
+                <h2>UPI (Coming Soon)</h2>
+                <p class="payment-placeholder">Pay via Google Pay, PhonePe, PayTM, and more...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Razorpay Script -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+    <!-- Razorpay Payment Button Configuration -->
+    <script>
+        document.getElementById('razorpay-button').onclick = function (e) {
+            e.preventDefault();
+
+            // Create an order by calling your backend order creation route
+            fetch('/create_razorpay_order', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    amount: '{{ total * 100 }}',  // Razorpay expects amount in paisa, multiply by 100
+                    currency: 'INR'
+                })
+            }).then(function (response) {
+                return response.json();
+            }).then(function (orderData) {
+                var options = {
+                    "key": "{{ RAZORPAY_KEY_ID }}", // Enter your Razorpay Key ID
+                    "amount": orderData.amount,
+                    "currency": "INR",
+                    "name": "Your Company Name",
+                    "description": "Test Transaction",
+                    "image": "/your_logo.png",
+                    "order_id": orderData.id, // Razorpay Order ID
+                    "handler": function (response) {
+                        // After payment is successful, call the backend to verify the payment
+                        fetch('/verify_razorpay_payment', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                razorpay_payment_id: response.razorpay_payment_id,
+                                razorpay_order_id: response.razorpay_order_id,
+                                razorpay_signature: response.razorpay_signature
+                            })
+                        }).then(function (paymentResponse) {
+                            return paymentResponse.json();
+                        }).then(function (paymentResult) {
+                            if (paymentResult.success) {
+                                alert("Payment successful");
+                                window.location.href = "/payment-success";
+                            } else {
+                                alert("Payment failed");
+                            }
+                        });
+                    },
+                    "prefill": {
+                        "name": "John Doe",
+                        "email": "john@example.com",
+                        "contact": "9999999999"
+                    },
+                    "theme": {
+                        "color": "#3399cc"
+                    }
+                };
+                var rzp1 = new Razorpay(options);
+                rzp1.open();
+            }).catch(function (error) {
+                console.error('Error:', error);
+            });
+        };
+    </script>
+
+    <!-- PayPal SDK script -->
+    <script src="https://www.paypal.com/sdk/js?client-id=sb&currency=USD"></script>
+
+    <!-- PayPal Button Configuration -->
+    <script>
+        paypal.Buttons({
+            // Set up the transaction
+            createOrder: function(data, actions) {
+                return actions.order.create({
+                    purchase_units: [{
+                        amount: {
+                            value: '{{ "%.2f"|format(total) }}'  // Dynamic total from backend
+                        }
+                    }]
+                });
+            },
+
+            // Finalize the transaction after the payment is authorized
+            onApprove: function(data, actions) {
+                return actions.order.capture().then(function(details) {
+                    alert('Transaction completed by ' + details.payer.name.given_name);
+                    window.location.href = "/payment-success";
+                });
+            }
+        }).render('#paypal-button-container');
+    </script>
+</body>
+</html>

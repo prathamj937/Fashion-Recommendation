@@ -1,0 +1,219 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recommended Outfits</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            /* background-image: url('https://images8.alphacoders.com/132/thumb-1920-1323371.png'); */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            font-family: 'Inter', sans-serif;
+        }
+
+        h1 {
+            color: #1F2937;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.15);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .bg-white {
+            transition: transform 0.5s ease, box-shadow 0.3s ease, opacity 0.3s ease;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .bg-white:hover {
+            transform: translateY(-10px) rotate(1deg);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+            opacity: 0.95;
+        }
+
+        img {
+            border-radius: 12px;
+            transition: transform 0.4s ease, opacity 0.3s ease;
+        }
+
+        .bg-white:hover img {
+            transform: scale(1.05);
+            opacity: 0.9;
+        }
+
+        .main-content h2 {
+            color: #111827;
+            margin-top: 8px;
+            font-size: 1.25rem;
+        }
+
+        .main-content p {
+            color: #374151;
+            margin-top: 4px;
+        }
+
+        .price {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1F2937;
+        }
+
+        .bg-gray-200 {
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #6B7280;
+            font-size: 1rem;
+            height: 12rem;
+        }
+
+        .product-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            padding: 10px;
+            font-size: 0.875rem;
+            opacity: 0;
+            transform: translateY(100%);
+            transition: opacity 0.3s ease, transform 0.4s ease;
+            z-index: 10;
+        }
+
+        .bg-white:hover .product-info {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .product-info h3 {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .product-info p {
+            margin: 5px 0;
+        }
+
+        .main-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        a.product-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .cart-icon {
+            position: fixed;
+            top: 20px;
+            right: 30px;
+            cursor: pointer;
+            z-index: 1000;
+        }
+
+        .cart-icon img {
+            width: 50px;
+            transition: transform 0.3s ease;
+        }
+
+        .cart-icon img:hover {
+            transform: rotate(10deg) scale(1.1);
+        }
+
+        .sorting-form {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 1rem;
+        }
+
+        .sorting-form select {
+            border: 1px solid #D1D5DB;
+            border-radius: 8px;
+            padding: 8px;
+            font-size: 1rem;
+            color: #374151;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .sorting-form select:hover {
+            background-color: #f0f0f0;
+            transform: scale(1.05);
+        }
+
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            color: #ffffff;
+            font-size: 0.875rem;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.6);
+        }
+    </style>
+</head>
+<body>
+    <div class="cart-icon">
+        <a href="{{ url_for('view_cart') }}">
+            <img src="https://cdn-icons-png.flaticon.com/512/833/833314.png" alt="Cart">
+        </a>
+    </div>
+
+    <div class="container mx-auto mt-10">
+        <h1 class="text-4xl font-bold text-center mb-8">Recommended Outfits Based on Your Analysis</h1>
+
+        <form method="GET" action="{{ url_for('recommendations') }}" class="sorting-form">
+            <select name="sort" onchange="this.form.submit()">
+                <option value="" disabled selected>Sort by</option>
+                <option value="price_asc" {% if sort == 'price_asc' %}selected{% endif %}>Price: Low to High</option>
+                <option value="price_desc" {% if sort == 'price_desc' %}selected{% endif %}>Price: High to Low</option>
+            </select>
+        </form>
+
+        <div class="grid mt-8">
+            {% for item in clothes %}
+            <a href="{{ url_for('product_page', product_id=item['id']) }}" target="_blank" class="product-link">
+                <div class="bg-white shadow-md rounded-lg p-6">
+                    <div class="main-content">
+                        {% if item['image'] %}
+                            <img src="{{ item['image'] }}" alt="{{ item['name'] }}" class="w-full h-48 object-cover">
+                        {% else %}
+                            <div class="w-full h-48 bg-gray-200">
+                                <span>No Image Available</span>
+                            </div>
+                        {% endif %}
+                        <h2 class="text-lg font-bold">{{ item['name'] }}</h2>
+                        <p class="price">${{ item['price'] }}</p>
+                    </div>
+
+                    <div class="product-info">
+                        <h3>{{ item['name'] }}</h3>
+                        <p>Material: {{ item['material'] }}</p>
+                        <p>Size: {{ item['size'] }}</p>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <footer class="footer">
+        &copy; 2024 FashionFusion. All rights reserved.
+    </footer>
+</body>
+</html>

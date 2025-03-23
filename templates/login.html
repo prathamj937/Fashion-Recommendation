@@ -1,0 +1,408 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background-image: url('https://images8.alphacoders.com/132/thumb-1920-1323371.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            animation: fadeIn 1.5s ease-in-out; 
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        form {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 400px;
+            margin: auto;
+            transform: translateY(100px);
+            animation: slideUp 0.8s ease-in-out forwards; 
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        label {
+            color: #4B5563;
+            font-weight: 500;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            border-radius: 8px;
+        }
+
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            border-color: #3B82F6;
+            box-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
+            transform: scale(1.03);
+        }
+
+        button {
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #3B82F6;
+            transform: scale(1.05); 
+        }
+
+        .text-red-500 {
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .mt-4 {
+            margin-top: 1rem;
+        }
+
+        .password-strength {
+            font-size: 0.875rem;
+            color: #D97706;
+        }
+
+        .social-login-btn {
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            padding: 10px 15px;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .social-login-btn:hover {
+            transform: translateY(-3px); 
+        }
+
+        .social-login-btn i {
+            margin-right: 10px;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        footer {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 15px;
+            text-align: center;
+            margin-top: auto;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        footer p {
+            color: #4B5563;
+        }
+
+        footer a {
+            color: #3B82F6;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+
+    <script>
+        function checkPasswordStrength() {
+            var password = document.getElementById('password').value;
+            var strengthText = document.getElementById('strengthText');
+            if (password.length < 6) {
+                strengthText.innerHTML = "Weak password";
+                strengthText.style.color = "#DC2626"; // Red for weak
+            } else if (password.length >= 6 && password.length < 10) {
+                strengthText.innerHTML = "Moderate password";
+                strengthText.style.color = "#D97706"; // Amber for moderate
+            } else {
+                strengthText.innerHTML = "Strong password";
+                strengthText.style.color = "#16A34A"; // Green for strong
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="flex justify-center items-center h-screen">
+        <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+            <h1 class="text-2xl font-bold mb-6 text-center">{{ title }}</h1>
+            <form action="{{ action_url }}" method="POST">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700">Username</label>
+                    <input type="text" name="username" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm" required>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700">Password</label>
+                    <input type="password" name="password" id="password" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm" required oninput="checkPasswordStrength()">
+                    {% if not signup %}
+                        <p class="text-sm text-blue-500 mt-1"><a href="{{ url_for('forgot_password') }}">(Forgot Password?)</a></p>
+                    {% endif %}
+                    {% if show_confirm %}
+                    <div class="mt-2 password-strength">
+                        <span id="strengthText"></span>
+                    </div>
+                    {% endif %}
+                </div>
+                {% if show_confirm %}
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700">Confirm Password</label>
+                    <input type="password" name="confirm_password" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm" required>
+                </div>
+                {% endif %}
+                <div class="flex justify-center mt-6">
+                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">{{ button_text }}</button>
+                </div>
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        <div class="mt-4 text-center text-red-500">
+                            {{ messages[0] }}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+            </form>
+
+            <div class="mt-6 text-center">
+                <p class="text-sm text-gray-600">Or log in with</p>
+                <div class="flex justify-center mt-4 gap-4">
+                    <a href="/auth/google" class="social-login-btn bg-red-500 text-white">
+                        <i class="fab fa-google"></i>Google
+                    </a>
+                    <a href="/auth/facebook" class="social-login-btn bg-blue-700 text-white">
+                        <i class="fab fa-facebook-f"></i>Facebook
+                    </a>
+                </div>
+            </div>
+
+            <div class="mt-4 text-center">
+                {% if signup %}
+                    <p>Already have an account? <a href="{{ login_url }}" class="text-blue-500">Log in</a></p>
+                {% else %}
+                    <p>Don't have an account? <a href="{{ signup_url }}" class="text-blue-500">Sign up</a></p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 FashionFusion All rights reserved.</p>
+        <p><a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+    </footer>
+</body>
+</html> -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+        .left, .right {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .left {
+            background: #f3f3f3;
+        }
+        .left img {
+            max-width: 100%;
+            height: auto;
+        }
+        .right {
+            background: #fff;
+        }
+        .login-box {
+            width: 50%;
+            padding: 40px;
+            text-align: center;
+        }
+        .login-box h2 {
+            margin-bottom: 20px;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        .btn-primary {
+            width: 100%;
+            background: #ff3e6c;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            color: white;
+            font-weight: 600;
+        }
+        .btn-primary:hover {
+            background: #ff6a85;
+        }
+        .social-login-btn {
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            padding: 10px 15px;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        .social-login-btn:hover {
+            transform: translateY(-3px);
+        }
+        .social-login-btn i {
+            margin-right: 10px;
+        }
+        .password-strength {
+            font-size: 0.875rem;
+            color: #D97706;
+            margin-top: 10px;
+        }
+        .text-center a {
+            color: #6c757d;
+            text-decoration: none;
+        }
+        .text-center a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Left Section (Image) -->
+        <div class="left">
+            <img src="{{ url_for('static', filename='images/login1.png') }}" alt="Login Image">
+
+        </div>
+
+        <!-- Right Section (Login Form) -->
+        <div class="right">
+            <div class="login-box">
+                <h2>Welcome Back!</h2>
+                <form action="{{ action_url }}" method="POST">
+                    <!-- Username Field -->
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-user"></i></span>
+                        <input type="text" name="username" class="form-control" placeholder="Enter your username" required>
+                    </div>
+
+                    <!-- Password Field -->
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                        <input type="password" name="password" id="password" class="form-control" placeholder="Enter your password" required oninput="checkPasswordStrength()">
+                    </div>
+
+                    <!-- Password Strength Indicator -->
+                    {% if show_confirm %}
+                    <div class="mt-2 password-strength">
+                        <span id="strengthText"></span>
+                    </div>
+                    {% endif %}
+
+                    <!-- Confirm Password Field (for Signup) -->
+                    {% if show_confirm %}
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                        <input type="password" name="confirm_password" class="form-control" placeholder="Confirm your password" required>
+                    </div>
+                    {% endif %}
+
+                    <!-- Login/Signup Button -->
+                    <button type="submit" class="btn btn-primary">{{ button_text }}</button>
+                </form>
+
+                <!-- Forgot Password Link -->
+                <div class="text-center mt-3">
+                    <a href="{{ url_for('forgot_password') }}">Forgot your password?</a>
+                </div>
+
+                <!-- Social Login Buttons -->
+                <div class="mt-4 text-center">
+                    <p class="text-sm text-gray-600">Or log in with</p>
+                    <div class="flex justify-center mt-4 gap-4">
+                        <a href="/auth/google" class="social-login-btn bg-red-500 text-white">
+                            <i class="fab fa-google"></i>Google
+                        </a>
+                        <a href="/auth/facebook" class="social-login-btn bg-blue-700 text-white">
+                            <i class="fab fa-facebook-f"></i>Facebook
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Signup/Login Toggle Link -->
+                <div class="mt-4 text-center">
+                    {% if signup %}
+                        <p>Already have an account? <a href="{{ login_url }}" class="text-blue-500">Log in</a></p>
+                    {% else %}
+                        <p>Don't have an account? <a href="{{ signup_url }}" class="text-blue-500">Sign up</a></p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Password Strength Check Script -->
+    <script>
+        function checkPasswordStrength() {
+            var password = document.getElementById('password').value;
+            var strengthText = document.getElementById('strengthText');
+            if (password.length < 6) {
+                strengthText.innerHTML = "Weak password";
+                strengthText.style.color = "#DC2626"; // Red for weak
+            } else if (password.length >= 6 && password.length < 10) {
+                strengthText.innerHTML = "Moderate password";
+                strengthText.style.color = "#D97706"; // Amber for moderate
+            } else {
+                strengthText.innerHTML = "Strong password";
+                strengthText.style.color = "#16A34A"; // Green for strong
+            }
+        }
+    </script>
+
+    <!-- Bootstrap and Font Awesome Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
+</body>
+</html>

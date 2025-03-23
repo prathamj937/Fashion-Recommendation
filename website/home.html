@@ -1,0 +1,1196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FashionFusion - Home</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet"> <!-- Bootstrap Icons -->
+        
+    <style>
+        /* body {
+            background-image: url("https://i.pinimg.com/736x/06/26/13/062613231a04bcea7bdbe83a8ad1c63c.jpg");
+        } */
+        html {
+    scroll-behavior: smooth;
+        }
+
+        header {
+            background-color: #fff;
+            padding: 1rem 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            position: relative;
+        }
+
+        .logo {
+    display: flex;        /* Centers the logo */
+    justify-content: center;
+    align-items: center;
+    height: 100px;        /* Adjust based on your header size */
+    padding: 10px;
+    }
+
+    .logo img {
+    max-width: 100%;     /* Ensures it doesn't overflow */
+    height: auto;        /* Maintains aspect ratio */
+    width: 120px;        /* Adjust size as needed */
+    object-fit: contain; /* Prevents stretching */
+    }
+
+
+        nav ul {
+            list-style-type: none;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            gap: 30px;
+            font-size: 1.2rem;
+            font-weight: 500;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav ul li a {
+            color: #3e4152;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        nav ul li a:hover {
+            color: #ff3e6c; 
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background-color: #f5f5f6;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            width: 400px;
+            margin: 0 auto;
+        }
+
+        .search-bar input {
+            border: none;
+            background: none;
+            outline: none;
+            flex-grow: 1;
+        }
+
+        .search-bar input::placeholder {
+            color: #a1a5b7;
+        }
+
+        .search-bar i {
+            color: #a1a5b7;
+        }
+
+        .profile-icons {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .profile-icons i {
+            font-size: 1.5rem;
+            color: #3e4152;
+            cursor: pointer;
+        }
+
+        .profile-icons i:hover {
+            color: #ff3e6c; 
+        }
+
+        .cart-count {
+            background-color: #ff3e6c;
+            color: white;
+            border-radius: 50%;
+            padding: 4px 8px;
+            font-size: 0.8rem;
+            position: absolute;
+            top: -10px;
+            right: -15px;
+        }
+
+
+        .gender-btn {
+            border: none;
+            background: none;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .gender-image {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 10px;
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s;
+        }
+
+        .gender-image:hover {
+            transform: scale(1.05);
+        }
+
+        .footer {
+        background: #222;
+        color: #fff;
+        padding: 40px 0;
+        text-align: center;
+        }
+
+    .footer-row {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+    }
+
+    .footer-col {
+        width: 25%;
+        min-width: 200px;
+        padding: 20px;
+        text-align: left;
+    }
+
+    .footer-col h4 {
+        font-size: 18px;
+        margin-bottom: 10px;
+        font-weight: bold;
+    }
+
+    .footer-col .links {
+        list-style: none;
+        padding: 0;
+    }
+
+    .footer-col .links li {
+        margin: 8px 0;
+    }
+
+    .footer-col .links a {
+        color: #fff;
+        text-decoration: none;
+        transition: 0.3s;
+    }
+
+    .footer-col .links a:hover {
+        color: #ff3e6c;
+    }
+
+    .footer-col p {
+        font-size: 14px;
+        margin-bottom: 15px;
+    }
+
+    .footer-col form {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .footer-col input {
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        margin-bottom: 10px;
+    }
+
+    .footer-col button {
+        padding: 10px;
+        background: #ff3e6c;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+
+    .footer-col button:hover {
+        background: #e6325a;
+    }
+
+    .icons {
+        margin-top: 10px;
+    }
+
+    .icons a {
+        display: inline-block;
+        color: white;
+        font-size: 20px;
+        margin: 0 10px;
+        transition: 0.3s;
+    }
+
+    .icons a:hover {
+        color: #ff3e6c;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .footer-row {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .footer-col {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+    }
+
+
+        #men-clothes, #women-clothes {
+            display: none;
+        }
+
+        h3, h2 {
+            font-weight: 600;
+            color: #343a40;
+        }
+
+        .clothing-item {
+            border: 1px solid #ddd;
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .clothing-item:hover {
+            transform: scale(1.08);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .clothing-item img {
+            max-width: 100%;
+            border-radius: 10px;
+            height: auto;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .clothing-item button {
+            flex: 1;
+            margin: 0 5px;
+        }
+    .slider-container {
+        width: 600px; /* Adjust width */
+        height: 750px; /* Adjust height */
+        position: relative;
+        overflow: hidden;
+        margin: auto;
+    }
+
+    .slider {
+        display: flex;
+        transition: transform 0.5s ease-in-out;
+    }
+
+    .slider img {
+        width: 100%; /* Makes sure images fit inside the frame */
+        height: 100%;
+        object-fit: cover; /* Ensures images maintain aspect ratio */
+        border-radius: 10px; /* Optional: Rounded corners */
+    }
+
+    .prev, .next {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: rgba(0, 0, 0, 0.5);
+        color: white;
+        border: none;
+        padding: 10px;
+        cursor: pointer;
+    }
+
+    .prev { left: 10px; }
+    .next { right: 10px; }
+
+    .prev:hover, .next:hover {
+        background: rgba(0, 0, 0, 0.8);
+    }
+    .footer-col .icons {
+    margin-top: 10px;
+}
+
+.footer-col .icons a {
+    display: inline-block;
+    font-size: 20px;
+    color: #fff;
+    background: #333;
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    border-radius: 50%;
+    margin: 5px;
+    transition: 0.3s;
+}
+
+.footer-col .icons a:hover {
+    background: #ff3e6c;
+    color: #fff;
+}
+
+    </style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+</head>
+
+<body>
+<header class="d-flex justify-content-between align-items-center">
+    <div class="logo">
+        <img src="/new_logo.jpg">
+    </div>
+    
+    <nav>
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="http://127.0.0.1:5000/" class="button-link">Fashion AI</a></li>
+        </ul>
+    </nav>
+    
+
+    <div class="search-bar">
+        <i class="bi bi-search"></i>
+        <input type="text" id="search-input" placeholder="Search for products, brands, and more" oninput="searchProducts()">
+    </div>
+
+<div class="profile-icons">
+    <i class="bi bi-person" onclick="redirectToLogin()"></i> 
+    <i class="bi bi-heart" onclick="redirectToWishlist()"></i> 
+    <i class="bi bi-bag" onclick="redirectToCart()">
+        <span class="cart-count" id="cart-count">0</span>
+    </i>
+</div>
+
+    </div>
+</header>
+<div class="slider-container">
+    <div class="slider">
+        <img src="https://www.pngall.com/wp-content/uploads/6/Sweater-Transparent.png" alt="Sweater">
+        <img src="https://images-na.ssl-images-amazon.com/images/I/71ltVJH47%2BL._AC_UL1335_.jpg" alt="Jacket">
+        <img src="https://imgix.bustle.com/inverse/5b/1c/bd/f9/1cae/4d45/94db/b35c7f85411d/screen-shot-2019-10-07-at-84733-pmpng.png?w=768&h=890&fit=crop&crop=faces&auto=format%2Ccompress&q=50&dpr=2" alt="Hoodies">
+    </div>
+    <button class="prev" onclick="moveSlide(-1)">&#10094;</button>
+    <button class="next" onclick="moveSlide(1)">&#10095;</button>
+</div>
+
+<!-- Gender Selection -->
+<section id="gender-selection" class="text-center my-4">
+    <h3>Select Gender</h3>
+    <div class="d-flex justify-content-center gap-4 my-4">
+        <button class="gender-btn" onclick="showClothes('men')">
+            <img src="https://tse2.mm.bing.net/th?id=OIP.QkgPlqhbSYF1jP8na6pwuQHaJQ&pid=Api&P=0&h=180" alt="Men" class="gender-image">
+        </button>
+       
+        <button class="gender-btn" onclick="showClothes('women')">
+            <img src="https://tse3.mm.bing.net/th?id=OIP.yCHVgwUADZNn4XhuBuuQ9AHaHa&pid=Api&P=0&h=180" alt="Women" class="gender-image">
+        </button>
+
+        <button class="gender-btn" onclick="showClothes('both')">
+            <img src="https://tse3.mm.bing.net/th?id=OIP.u7K2od8QTzielpF_gpPfTwHaHa&pid=Api&P=0&h=180" alt="Both" class="gender-image">
+        </button>
+    </div>
+</section>
+
+<!-- Filters Section -->
+<section id="filters" class="container my-5">
+    <div class="card shadow-sm p-4">
+        <h3 class="text-center mb-4">Filter by</h3>
+        <div class="row g-4">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="size-filter" class="form-label">Size</label>
+                    <select id="size-filter" class="form-select" onchange="applyFilters()">
+                        <option value="">All</option>
+                        <option value="S">Small</option>
+                        <option value="M">Medium</option>
+                        <option value="L">Large</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Price Range Filter -->
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="price-filter" class="form-label">Price Range</label>
+                    <div style="position: relative; width: 100%; padding-top: 15px;">
+                        <div style="position: absolute; top: 50%; left: 0; right: 0; height: 2px; background-color: #ccc;"></div>
+                        <input type="range" id="price-filter" class="form-range" min="0" max="100" step="10" onchange="applyFilters()" style="position: relative; z-index: 1;">
+                    </div>
+                    <span class="text-muted">Up to $<span id="price-value">50</span></span>
+                </div>
+            </div>
+
+            <!-- Color Filter -->
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="color-filter" class="form-label">Color</label>
+                    <select id="color-filter" class="form-select" onchange="applyFilters()">
+                        <option value="">All</option>
+                        <option value="red">Red</option>
+                        <option value="blue">Blue</option>
+                        <option value="black">Black</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Rating Filter -->
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="rating-filter" class="form-label">Rating</label>
+                    <select id="rating-filter" class="form-select" onchange="applyFilters()">
+                        <option value="">All</option>
+                        <option value="4">4 Stars & Up</option>
+                        <option value="3">3 Stars & Up</option>
+                        <option value="2">2 Stars & Up</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Men's Clothing Categories -->
+<section id="men-categories" class="container my-4" style="display:none;">
+    <h3 class="text-center">Men's Clothing Categories</h3>
+    <div class="row text-center">
+        <div class="col-md-4 mb-3">
+            <button class="btn btn-outline-secondary w-100" onclick="filterMen('bottom-wear')">Bottom Wears</button>
+        </div>
+        <div class="col-md-4 mb-3">
+            <button class="btn btn-outline-secondary w-100" onclick="filterMen('hoodies')">Hoodies</button>
+        </div>
+        <div class="col-md-4 mb-3">
+            <button class="btn btn-outline-secondary w-100" onclick="filterMen('denim-jackets')">Denim Jackets</button>
+        </div>
+        <div class="col-md-4 mb-3">
+            <button class="btn btn-outline-secondary w-100" onclick="filterMen('oversized-tshirts')">Oversized T-Shirts</button>
+        </div>
+        <div class="col-md-4 mb-3">
+            <button class="btn btn-outline-secondary w-100" onclick="filterMen('sweaters')">Sweaters</button>
+        </div>
+        <div class="col-md-4 mb-3">
+            <button class="btn btn-outline-secondary w-100" onclick="filterMen('sweatshirts')">Sweatshirts</button>
+        </div>
+        <div class="col-md-4 mb-3">
+            <button class="btn btn-outline-secondary w-100" onclick="filterMen('jackets')">Jackets</button>
+        </div>
+    </div>
+</section>
+
+<!-- Women's Clothing Categories -->
+<section id="women-categories" class="container my-4" style="display:none;">
+    <h3 class="text-center">Women's Clothing Categories</h3>
+    <div class="row text-center">
+        <div class="col-md-4 mb-3">
+            <button class="btn btn-outline-secondary w-100" onclick="filterWomen('bottom-wear')">Bottom Wears</button>
+        </div>
+        <div class="col-md-4 mb-3">
+            <button class="btn btn-outline-secondary w-100" onclick="filterWomen('jackets')">Jackets</button>
+        </div>
+        <div class="col-md-4 mb-3">
+            <button class="btn btn-outline-secondary w-100" onclick="filterWomen('sweaters')">Sweaters</button>
+        </div>
+        <div class="col-md-4 mb-3">
+            <button class="btn btn-outline-secondary w-100" onclick="filterWomen('sweatshirts')">Sweatshirts</button>
+        </div>
+        <div class="col-md-4 mb-3">
+            <button class="btn btn-outline-secondary w-100" onclick="filterWomen('crop-top')">Crop Tops</button>
+        </div>
+    </div>
+</section>
+
+<!-- Men's Clothing Section -->
+<section id="men-clothes" class="container my-4">
+    <h2 class="text-center" id="men-heading" style="display:none;">Men's Clothing</h2>
+    <div class="row">
+        <!-- Jackets -->
+        <div class="col-md-4 col-sm-6 col-lg-3 mb-4 clothing-item" data-price="30" data-category="jackets">
+            <img src="https://happygentleman.com/wp-content/uploads/2019/11/999-mens-leather-jacket-brown1.jpg" alt="Men's Jacket 1">
+            <h3>Leather Jacket</h3>
+            <p>$30</p>
+            <div class="button-container">
+                <button class="btn btn-success" onclick="addToCart('Men\'s Jacket 1', 30)">Add to Cart</button>
+                <button class="btn btn-outline-secondary" onclick="addToWishlist('Men\'s Jacket 1')">Add to Wishlist</button>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-6 col-lg-3 mb-4 clothing-item" data-price="35" data-category="jackets">
+            <img src="https://images-na.ssl-images-amazon.com/images/I/71ltVJH47%2BL._AC_UL1335_.jpg" alt="Men's Denim Jacket">
+            <h3>Denim Jacket</h3>
+            <p>$35</p>
+            <div class="button-container">
+                <button class="btn btn-success" onclick="addToCart('Men\'s Jacket 2', 35)">Add to Cart</button>
+                <button class="btn btn-outline-secondary" onclick="addToWishlist('Men\'s Jacket 2')">Add to Wishlist</button>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-6 col-lg-3 mb-4 clothing-item" data-price="40" data-category="jackets">
+            <img src="https://images-na.ssl-images-amazon.com/images/I/61uZLgSIS2L._AC_UL1500_.jpg" alt="Men's Jacket 3">
+            <h3>Winter Jacket</h3>
+            <p>$40</p>
+            <div class="button-container">
+                <button class="btn btn-success" onclick="addToCart('Men\'s Jacket 3', 40)">Add to Cart</button>
+                <button class="btn btn-outline-secondary" onclick="addToWishlist('Men\'s Jacket 3')">Add to Wishlist</button>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-6 col-lg-3 mb-4 clothing-item" data-price="45" data-category="jackets">
+            <img src="https://www.jacketars.com/wp-content/uploads/2021/01/Mens-Puffer-Red-Jacket.jpg" alt="Men's Jacket 4">
+            <h3>Puffer Jacket</h3>
+            <p>$45</p>
+            <div class="button-container">
+                <button class="btn btn-success" onclick="addToCart('Men\'s Jacket 4', 45)">Add to Cart</button>
+                <button class="btn btn-outline-secondary" onclick="addToWishlist('Men\'s Jacket 4')">Add to Wishlist</button>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-6 col-lg-3 mb-4 clothing-item" data-price="50" data-category="jackets">
+            <img src="https://aws.atomretro.com/products/1400/levis-wood-thrush-cord-trucker-jacket-31.jpg" alt="Men's Jacket 5">
+            <h3>Trunker Jacket</h3>
+            <p>$50</p>
+            <div class="button-container">
+                <button class="btn btn-success" onclick="addToCart('Men\'s Jacket 5', 50)">Add to Cart</button>
+                <button class="btn btn-outline-secondary" onclick="addToWishlist('Men\'s Jacket 5')">Add to Wishlist</button>
+            </div>
+        </div>
+
+        <!-- Hoodies -->
+        <div class="col-md-4 col-sm-6 col-lg-3 mb-4 clothing-item" data-price="45" data-category="hoodies">
+            <img src="https://imgix.bustle.com/inverse/5b/1c/bd/f9/1cae/4d45/94db/b35c7f85411d/screen-shot-2019-10-07-at-84733-pmpng.png?w=768&h=890&fit=crop&crop=faces&auto=format%2Ccompress&q=50&dpr=2" alt="Men's Hoodie 1">
+            <h3>Black Hoodie</h3>
+            <p>$45</p>
+            <div class="button-container">
+                <button class="btn btn-success" onclick="addToCart('Men\'s Hoodie 1', 45)">Add to Cart</button>
+                <button class="btn btn-outline-secondary" onclick="addToWishlist('Men\'s Hoodie 1')">Add to Wishlist</button>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-6 col-lg-3 mb-4 clothing-item" data-price="50" data-category="hoodies">
+            <img src="https://i.pinimg.com/originals/8f/c5/e1/8fc5e13424e1adf66910674d6a4bc64d.jpg" alt="Men's Hoodie 2">
+            <h3>Stylish Hoodie</h3>
+            <p>$50</p>
+            <div class="button-container">
+                <button class="btn btn-success" onclick="addToCart('Men\'s Hoodie 2', 50)">Add to Cart</button>
+                <button class="btn btn-outline-secondary" onclick="addToWishlist('Men\'s Hoodie 2')">Add to Wishlist</button>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-6 col-lg-3 mb-4 clothing-item" data-price="55" data-category="hoodies">
+            <img src="https://images-na.ssl-images-amazon.com/images/I/61fr%2BdAdgSL._AC_UL1500_.jpg" alt="Men's Hoodie 3">
+            <h3>Aesthatic Hoodie</h3>
+            <p>$55</p>
+            <div class="button-container">
+                <button class="btn btn-success" onclick="addToCart('Men\'s Hoodie 3', 55)">Add to Cart</button>
+                <button class="btn btn-outline-secondary" onclick="addToWishlist('Men\'s Hoodie 3')">Add to Wishlist</button>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-6 col-lg-3 mb-4 clothing-item" data-price="48" data-category="hoodies">
+            <img src="https://i.pinimg.com/736x/32/11/9a/32119a477e2ac50240e5a8d8654473d3.jpg" alt="Men's Hoodie 4">
+            <h3>White Hoodie</h3>
+            <p>$48</p>
+            <div class="button-container">
+                <button class="btn btn-success" onclick="addToCart('Men\'s Hoodie 4', 48)">Add to Cart</button>
+                <button class="btn btn-outline-secondary" onclick="addToWishlist('Men\'s Hoodie 4')">Add to Wishlist</button>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-6 col-lg-3 mb-4 clothing-item" data-price="53" data-category="hoodies">
+            <img src="https://i.pinimg.com/originals/6a/bf/1e/6abf1e076f5c0a887cce55d67c0196af.jpg" alt="Men's Hoodie 5">
+            <h3>Brown and White Hoodie</h3>
+            <p>$53</p>
+            <div class="button-container">
+                <button class="btn btn-success" onclick="addToCart('Men\'s Hoodie 5', 53)">Add to Cart</button>
+                <button class="btn btn-outline-secondary" onclick="addToWishlist('Men\'s Hoodie 5')">Add to Wishlist</button>
+            </div>
+        </div>
+
+        <!-- Sweaters -->
+        <div class="col-md-4 col-sm-6 col-lg-3 mb-4 clothing-item" data-price="40" data-category="sweaters">
+            <img src="https://shop.tamilnadutouristplaces.com/wp-content/uploads/2023/11/23d85816-64da-4c1b-9825-1d141f302020-510x510.webp" alt="Men's Sweater 1">
+            <h3>White Sweater</h3>
+            <p>$40</p>
+            <div class="button-container">
+                <button class="btn btn-success" onclick="addToCart('Men\'s Sweater 1', 40)">Add to Cart</button>
+                <button class="btn btn-outline-secondary" onclick="addToWishlist('Men\'s Sweater 1')">Add to Wishlist</button>
+            </div>
+        </div>
+                <!-- Sweaters (continued) -->
+                <div class="col-md-4 col-sm-6 col-lg-3 mb-4 clothing-item" data-price="47" data-category="sweaters">
+                    <img src="https://shop.tamilnadutouristplaces.com/wp-content/uploads/2023/11/16fb2719-7567-45c6-a19c-2bab75e4ba5a-510x510.webp" alt="Men's Sweater 3">
+                    <h3>Old School Sweater</h3>
+                    <p>$47</p>
+                    <div class="button-container">
+                        <button class="btn btn-success" onclick="addToCart('Men\'s Sweater 3', 47)">Add to Cart</button>
+                        <button class="btn btn-outline-secondary" onclick="addToWishlist('Men\'s Sweater 3')">Add to Wishlist</button>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-6 col-lg-3 mb-4 clothing-item" data-price="50" data-category="sweaters">
+                    <img src="https://i.pinimg.com/originals/53/67/14/536714782ecd64f30ae3f67c03f8808b.jpg" alt="Men's Sweater 4">
+                    <h3>Grey Sweater</h3>
+                    <p>$50</p>
+                    <div class="button-container">
+                        <button class="btn btn-success" onclick="addToCart('Men\'s Sweater 4', 50)">Add to Cart</button>
+                        <button class="btn btn-outline-secondary" onclick="addToWishlist('Men\'s Sweater 4')">Add to Wishlist</button>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-6 col-lg-3 mb-4 clothing-item" data-price="52" data-category="sweaters">
+                    <img src="https://shop.tamilnadutouristplaces.com/wp-content/uploads/2023/11/83b3748f-53a0-403b-9ea9-5de1b070b70f-510x510.webp" alt="Men's Sweater 5">
+                    <h3>Baige Sweater</h3>
+                    <p>$52</p>
+                    <div class="button-container">
+                        <button class="btn btn-success" onclick="addToCart('Men\'s Sweater 5', 52)">Add to Cart</button>
+                        <button class="btn btn-outline-secondary" onclick="addToWishlist('Men\'s Sweater 5')">Add to Wishlist</button>
+                    </div>
+                </div>
+        
+                <!-- Bottomwears -->
+                <div class="col-md-4 col-sm-6 col-lg-3 mb-4 clothing-item" data-price="40" data-category="bottomwear">
+                    <img src="https://img3.junaroad.com/uiproducts/21324318/zoom_1-1719134760.jpg" alt="Men's Bottomwear 1">
+                    <h3>Military Cargo</h3>
+                    <p>$40</p>
+                    <div class="button-container">
+                        <button class="btn btn-success" onclick="addToCart('Men\'s Bottomwear 1', 40)">Add to Cart</button>
+                        <button class="btn btn-outline-secondary" onclick="addToWishlist('Men\'s Bottomwear 1')">Add to Wishlist</button>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-6 col-lg-3 mb-4 clothing-item" data-price="42" data-category="bottomwear">
+                    <img src="https://i.pinimg.com/originals/79/0f/75/790f75678eae1eb91aee37b8878853c5.jpg" alt="Men's Bottomwear 2">
+                    <h3>Black Aesthatic Cargos</h3>
+                    <p>$42</p>
+                    <div class="button-container">
+                        <button class="btn btn-success" onclick="addToCart('Men\'s Bottomwear 2', 42)">Add to Cart</button>
+                        <button class="btn btn-outline-secondary" onclick="addToWishlist('Men\'s Bottomwear 2')">Add to Wishlist</button>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-6 col-lg-3 mb-4 clothing-item" data-price="44" data-category="bottomwear">
+                    <img src="https://m.media-amazon.com/images/I/61OUjfiobFS._AC_UF894,1000_QL80_.jpg" alt="Men's Bottomwear 3">
+                    <h3>Relaxed Jeans</h3>
+                    <p>$44</p>
+                    <div class="button-container">
+                        <button class="btn btn-success" onclick="addToCart('Men\'s Bottomwear 3', 44)">Add to Cart</button>
+                        <button class="btn btn-outline-secondary" onclick="addToWishlist('Men\'s Bottomwear 3')">Add to Wishlist</button>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-6 col-lg-3 mb-4 clothing-item" data-price="46" data-category="bottomwear">
+                    <img src="https://jeanbase.com/wp-content/uploads/2019/02/WakoLWFront.jpg" alt="Men's Bottomwear 4">
+                    <h3>Tightfit Jeans</h3>
+                    <p>$46</p>
+                    <div class="button-container">
+                        <button class="btn btn-success" onclick="addToCart('Men\'s Bottomwear 4', 46)">Add to Cart</button>
+                        <button class="btn btn-outline-secondary" onclick="addToWishlist('Men\'s Bottomwear 4')">Add to Wishlist</button>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-6 col-lg-3 mb-4 clothing-item" data-price="48" data-category="bottomwear">
+                    <img src="https://i.pinimg.com/originals/92/1e/93/921e93d7a9cf44af2c94cf79e263f91c.jpg" alt="Men's Bottomwear 5">
+                    <h3>Black Tightfit Cargos</h3>
+                    <p>$48</p>
+                    <div class="button-container">
+                        <button class="btn btn-success" onclick="addToCart('Men\'s Bottomwear 5', 48)">Add to Cart</button>
+                        <button class="btn btn-outline-secondary" onclick="addToWishlist('Men\'s Bottomwear 5')">Add to Wishlist</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+
+<!-- Women's Clothing Section -->
+<section id="women-clothes" class="container my-4">
+    <h2 class="text-center" id="women-heading" style="display:none;">Women's Clothing</h2>
+    <div class="row">
+        <!-- Item 1: Jacket -->
+        <div class="col-md-4 col-sm-6 col-lg-3 mb-4 clothing-item" data-price="50" data-category="jackets">
+            <img src="https://i5.walmartimages.com/asr/2437fde7-ab37-484b-9b1c-5be1910ecd11.994f254e330f768d29a046ef552e59b0.jpeg" alt="Women's Jacket 1">
+            <h3>Brown Leather Jacket</h3>
+            <p>$50</p>
+            <div class="button-container">
+                <button class="btn btn-success" onclick="addToCart('Women\'s Jacket 1', 50)">Add to Cart</button>
+                <button class="btn btn-outline-secondary" onclick="addToWishlist('Women\'s Jacket 1')">Add to Wishlist</button>
+            </div>
+        </div>
+        <!-- Item 2: Sweater -->
+        <div class="col-md-4 col-sm-6 col-lg-3 mb-4 clothing-item" data-price="40" data-category="sweaters">
+            <img src="https://i.pinimg.com/originals/3f/6b/6c/3f6b6cff244aa6519cd44fa7f43f538a.jpg" alt="Women's Sweater 1">
+            <h3>Baige Sweater</h3>
+            <p>$40</p>
+            <div class="button-container">
+                <button class="btn btn-success" onclick="addToCart('Women\'s Sweater 1', 40)">Add to Cart</button>
+                <button class="btn btn-outline-secondary" onclick="addToWishlist('Women\'s Sweater 1')">Add to Wishlist</button>
+            </div>
+        </div>
+        <!-- Item 3: Jacket -->
+        <div class="col-md-4 col-sm-6 col-lg-3 mb-4 clothing-item" data-price="55" data-category="jackets">
+            <img src="https://i5.walmartimages.com/asr/615808ac-253f-44cd-a69e-8d8d9fd47e91.27de1643230b368f4b426a731eb1e3b3.jpeg" alt="Women's Jacket 2">
+            <h3>Winter Jacket</h3>
+            <p>$55</p>
+            <div class="button-container">
+                <button class="btn btn-success" onclick="addToCart('Women\'s Jacket 2', 55)">Add to Cart</button>
+                <button class="btn btn-outline-secondary" onclick="addToWishlist('Women\'s Jacket 2')">Add to Wishlist</button>
+            </div>
+        </div>
+        <!-- Item 4: Sweater -->
+        <div class="col-md-4 col-sm-6 col-lg-3 mb-4 clothing-item" data-price="42" data-category="sweaters">
+            <img src="https://i.pinimg.com/originals/5d/85/7b/5d857b9e517fc2cfa3bbccfa408876a6.png" alt="Women's Sweater 2">
+            <h3>Golden Sweater</h3>
+            <p>$42</p>
+            <div class="button-container">
+                <button class="btn btn-success" onclick="addToCart('Women\'s Sweater 2', 42)">Add to Cart</button>
+                <button class="btn btn-outline-secondary" onclick="addToWishlist('Women\'s Sweater 2')">Add to Wishlist</button>
+            </div>
+        </div>
+        <!-- Item 5: Jacket -->
+        <div class="col-md-4 col-sm-6 col-lg-3 mb-4 clothing-item" data-price="60" data-category="jackets">
+            <img src="https://s3-eu-west-1.amazonaws.com/images.linnlive.com/da7f5bdce106a01118acbf405ccb5343/3bbc4724-cbfb-46f1-9adf-7f74b17a7b87.jpg" alt="Women's Jacket 3">
+            <h3>Black Jacket</h3>
+            <p>$60</p>
+            <div class="button-container">
+                <button class="btn btn-success" onclick="addToCart('Women\'s Jacket 3', 60)">Add to Cart</button>
+                <button class="btn btn-outline-secondary" onclick="addToWishlist('Women\'s Jacket 3')">Add to Wishlist</button>
+            </div>
+        </div>
+        <!-- Item 6: Sweater -->
+        <div class="col-md-4 col-sm-6 col-lg-3 mb-4 clothing-item" data-price="38" data-category="sweaters">
+            <img src="https://i.pinimg.com/originals/11/07/e2/1107e2a13a01a3c90b283afa5f8624f2.jpg" alt="Women's Sweater 3">
+            <h3>Stylish Sweater</h3>
+            <p>$38</p>
+            <div class="button-container">
+                <button class="btn btn-success" onclick="addToCart('Women\'s Sweater 3', 38)">Add to Cart</button>
+                <button class="btn btn-outline-secondary" onclick="addToWishlist('Women\'s Sweater 3')">Add to Wishlist</button>
+            </div>
+        </div>
+        <!-- Item 7: Jacket -->
+        <div class="col-md-4 col-sm-6 col-lg-3 mb-4 clothing-item" data-price="48" data-category="jackets">
+            <img src="https://i.pinimg.com/originals/aa/54/d4/aa54d48d237dfe26f217668ef6c1af66.jpg" alt="Women's Jacket 4">
+            <h3>Green and Black Jacket</h3>
+            <p>$48</p>
+            <div class="button-container">
+                <button class="btn btn-success" onclick="addToCart('Women\'s Jacket 4', 48)">Add to Cart</button>
+                <button class="btn btn-outline-secondary" onclick="addToWishlist('Women\'s Jacket 4')">Add to Wishlist</button>
+            </div>
+        </div>
+        <!-- Item 8: Sweater -->
+        <div class="col-md-4 col-sm-6 col-lg-3 mb-4 clothing-item" data-price="39" data-category="sweaters">
+            <img src="https://i5.walmartimages.com/asr/d9ea037b-4e7c-4169-9969-da8e7e94f8cb_1.d9c365bf031265861efb8f926459ec4d.jpeg" alt="Women's Sweater 4">
+            <h3>Aesthatic Sweater</h3>
+            <p>$39</p>
+            <div class="button-container">
+                <button class="btn btn-success" onclick="addToCart('Women\'s Sweater 4', 39)">Add to Cart</button>
+                <button class="btn btn-outline-secondary" onclick="addToWishlist('Women\'s Sweater 4')">Add to Wishlist</button>
+            </div>
+        </div>
+        <!-- Item 9: Jacket -->
+        <div class="col-md-4 col-sm-6 col-lg-3 mb-4 clothing-item" data-price="45" data-category="jackets">
+            <img src="https://www.bayperfect.com/wp-content/uploads/2020/07/Women%E2%80%99s-New-Style-Casual-Pink-Biker-Leather-Jacket.jpg" alt="Women's Jacket 5">
+            <h3>Pink Jacket</h3>
+            <p>$45</p>
+            <div class="button-container">
+                <button class="btn btn-success" onclick="addToCart('Women\'s Jacket 5', 45)">Add to Cart</button>
+                <button class="btn btn-outline-secondary" onclick="addToWishlist('Women\'s Jacket 5')">Add to Wishlist</button>
+            </div>
+        </div>
+        <!-- Item 10: Sweater -->
+        <div class="col-md-4 col-sm-6 col-lg-3 mb-4 clothing-item" data-price="41" data-category="sweaters">
+            <img src="https://www.pngall.com/wp-content/uploads/6/Sweater-Transparent.png" alt="Women's Sweater 5">
+            <h3>Brown Sweater</h3>
+            <p>$41</p>
+            <div class="button-container">
+                <button class="btn btn-success" onclick="addToCart('Women\'s Sweater 5', 41)">Add to Cart</button>
+                <button class="btn btn-outline-secondary" onclick="addToWishlist('Women\'s Sweater 5')">Add to Wishlist</button>
+            </div>
+        </div>
+         <!-- Item 11: Sweatshirt -->
+         <div class="col-md-4 col-sm-6 col-lg-3 mb-4 clothing-item" data-price="35" data-category="sweatshirts">
+            <img src="https://i.pinimg.com/736x/83/5a/03/835a0349aae3417f9ed0b5f14d1b5d9e.jpg" alt="Women's Sweatshirt 1">
+            <h3>White Sweatshirt</h3>
+            <p>$35</p>
+            <div class="button-container">
+                <button class="btn btn-success" onclick="addToCart('Women\'s Sweatshirt 1', 35)">Add to Cart</button>
+                <button class="btn btn-outline-secondary" onclick="addToWishlist('Women\'s Sweatshirt 1')">Add to Wishlist</button>
+            </div>
+        </div>
+        <!-- Item 12: Sweatshirt -->
+        <div class="col-md-4 col-sm-6 col-lg-3 mb-4 clothing-item" data-price="37" data-category="sweatshirts">
+            <img src="https://pics.clipartpng.com/Blue_Sweatshirt_PNG_Clip_Art-2350.png" alt="Women's Sweatshirt 2">
+            <h3>Blue Sweatshirt</h3>
+            <p>$37</p>
+            <div class="button-container">
+                <button class="btn btn-success" onclick="addToCart('Women\'s Sweatshirt 2', 37)">Add to Cart</button>
+                <button class="btn btn-outline-secondary" onclick="addToWishlist('Women\'s Sweatshirt 2')">Add to Wishlist</button>
+            </div>
+        </div>
+        <!-- Item 13: Sweatshirt -->
+        <div class="col-md-4 col-sm-6 col-lg-3 mb-4 clothing-item" data-price="36" data-category="sweatshirts">
+            <img src="https://theworkwearstore.com/mm5/graphics/prd/alt/104410B00_main.png" alt="Women's Sweatshirt 3">
+            <h3>Brown Sweatshirt</h3>
+            <p>$36</p>
+            <div class="button-container">
+                <button class="btn btn-success" onclick="addToCart('Women\'s Sweatshirt 3', 36)">Add to Cart</button>
+                <button class="btn btn-outline-secondary" onclick="addToWishlist('Women\'s Sweatshirt 3')">Add to Wishlist</button>
+            </div>
+        </div>
+        <!-- Item 14: Sweatshirt -->
+        <div class="col-md-4 col-sm-6 col-lg-3 mb-4 clothing-item" data-price="39" data-category="sweatshirts">
+            <img src="https://images-na.ssl-images-amazon.com/images/I/51GlaHyuboL._AC_UX679_.jpg" alt="Women's Sweatshirt 4">
+            <h3>Clean Sweatshirt</h3>
+            <p>$39</p>
+            <div class="button-container">
+                <button class="btn btn-success" onclick="addToCart('Women\'s Sweatshirt 4', 39)">Add to Cart</button>
+                <button class="btn btn-outline-secondary" onclick="addToWishlist('Women\'s Sweatshirt 4')">Add to Wishlist</button>
+            </div>
+        </div>
+        <!-- Item 15: Sweatshirt -->
+        <div class="col-md-4 col-sm-6 col-lg-3 mb-4 clothing-item" data-price="34" data-category="sweatshirts">
+            <img src="https://gloimg.drlcdn.com/L/pdm-product-pic/Clothing/2016/06/22/source-img/20160622152147_51641.jpg" alt="Women's Sweatshirt 5">
+            <h3>Vermelion Sweatshirt</h3>
+            <p>$34</p>
+            <div class="button-container">
+                <button class="btn btn-success" onclick="addToCart('Women\'s Sweatshirt 5', 34)">Add to Cart</button>
+                <button class="btn btn-outline-secondary" onclick="addToWishlist('Women\'s Sweatshirt 5')">Add to Wishlist</button>
+            </div>
+        </div>
+
+        <!-- Additional Items (16-20: Bottomwears) -->
+        <!-- Item 16: Bottomwear -->
+        <div class="col-md-4 col-sm-6 col-lg-3 mb-4 clothing-item" data-price="45" data-category="bottomwear">
+            <img src="https://i5.walmartimages.com/asr/fe69aaa3-8a24-488e-af4c-7e2dd870b5df_1.f8ead08a78cbf97908f2c5cd467fbfed.jpeg" alt="Women's Bottomwear 1">
+            <h3>Golden Check Pants</h3>
+            <p>$45</p>
+            <div class="button-container">
+                <button class="btn btn-success" onclick="addToCart('Women\'s Bottomwear 1', 45)">Add to Cart</button>
+                <button class="btn btn-outline-secondary" onclick="addToWishlist('Women\'s Bottomwear 1')">Add to Wishlist</button>
+            </div>
+        </div>
+        <!-- Item 17: Bottomwear -->
+        <div class="col-md-4 col-sm-6 col-lg-3 mb-4 clothing-item" data-price="50" data-category="bottomwear">
+            <img src="https://images-na.ssl-images-amazon.com/images/I/61%2BjvALahyS._AC_UL1500_.jpg" alt="Women's Bottomwear 2">
+            <h3>Wide Relaxed Jeans</h3>
+            <p>$50</p>
+            <div class="button-container">
+                <button class="btn btn-success" onclick="addToCart('Women\'s Bottomwear 2', 50)">Add to Cart</button>
+                <button class="btn btn-outline-secondary" onclick="addToWishlist('Women\'s Bottomwear 2')">Add to Wishlist</button>
+            </div>
+        </div>
+        <!-- Item 18: Bottomwear -->
+        <div class="col-md-4 col-sm-6 col-lg-3 mb-4 clothing-item" data-price="47" data-category="bottom wear">
+            <img src="https://cdn-img.prettylittlething.com/c/3/7/4/c3747ca6167f857bd40648301a97c8d71701bcaa_cmu7097_2.jpg" alt="Women's Bottomwear 3">
+            <h3>Black Cargos</h3>
+            <p>$47</p>
+            <div class="button-container">
+                <button class="btn btn-success" onclick="addToCart('Women\'s Bottomwear 3', 47)">Add to Cart</button>
+                <button class="btn btn-outline-secondary" onclick="addToWishlist('Women\'s Bottomwear 3')">Add to Wishlist</button>
+            </div>
+        </div>
+        <!-- Item 19: Bottomwear -->
+        <div class="col-md-4 col-sm-6 col-lg-3 mb-4 clothing-item" data-price="49" data-category="bottomwear">
+            <img src="https://i.pinimg.com/originals/1e/20/65/1e2065a7921309578256760490fbaa4b.jpg" alt="Women's Bottomwear 4">
+            <h3>White Cargos</h3>
+            <p>$49</p>
+            <div class="button-container">
+                <button class="btn btn-success" onclick="addToCart('Women\'s Bottomwear 4', 49)">Add to Cart</button>
+                <button class="btn btn-outline-secondary" onclick="addToWishlist('Women\'s Bottomwear 4')">Add to Wishlist</button>
+            </div>
+        </div>
+        <!-- Item 20: Bottomwear -->
+        <div class="col-md-4 col-sm-6 col-lg-3 mb-4 clothing-item" data-price="52" data-category="bottomwear">
+            <img src="https://assets.myntassets.com/h_200,w_200,c_fill,g_auto/h_1440,q_100,w_1080/v1/assets/images/17197780/2022/5/31/1bc19df9-d75a-4774-92db-2282467842721653987503393-Mast--Harbour-Women-Cream-Coloured-Pure-Cotton-Cargos-671653-1.jpg" alt="Women's Bottomwear 5">
+            <h3>Baige Cargos</h3>
+            <p>$52</p>
+            <div class="button-container">
+                <button class="btn btn-success" onclick="addToCart('Women\'s Bottomwear 5', 52)">Add to Cart</button>
+                <button class="btn btn-outline-secondary" onclick="addToWishlist('Women\'s Bottomwear 5')">Add to Wishlist</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer class="footer">
+    <div class="footer-row">
+      <div class="footer-col">
+        <h4>Customer Support</h4>
+        <ul class="links">
+          <li><a href="#">Return & Exchange Policy</a></li>
+          <li><a href="#">Privacy & AI Ethics</a></li>
+          <li><a href="#">Customers</a></li>
+          <li><a href="#">Sustainability in Fashion</a></li>
+          <li><a href="#">Fashion Blog & Updates</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Explore</h4>
+        <ul class="links">
+          <li><a href="#">Latest AI Trends</a></li>
+          <li><a href="#">Virtual Try-On</a></li>
+          <li><a href="#">Style Inspiration</a></li>
+          <li><a href="#">Fashion Recommendations</a></li>
+          <li><a href="#">Celebrity Looks AI-Powered</a></li>
+          <li><a href="#">Best-Sellers & Trends</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>About Us</h4>
+        <ul class="links">
+          <li><a href="#">Who We Are</a></li>
+          <li><a href="#">Our Mission</a></li>
+          <li><a href="#">How It Works</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Social Media & Community</h4>
+        <p>Subscribe to our newsletter for a weekly dose of news, updates, helpful tips, and exclusive offers.</p>
+        
+        <form action="#">
+            <input type="text" placeholder="Your email" required>
+            <button type="submit">SUBSCRIBE</button>
+        </form>
+    
+        <div class="icons">
+            <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+            <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
+            <a href="#"><i class="fa-brands fa-instagram"></i></a>
+            <a href="#"><i class="fa-brands fa-linkedin"></i></a>
+            <a href="#"><i class="fa-brands fa-github"></i></a>
+            <a href="#"><i class="fa-brands fa-pinterest"></i></a>
+            <a href="#"><i class="fa-brands fa-youtube"></i></a>
+            <a href="#"><i class="fa-brands fa-tiktok"></i></a>
+            <a href="#"><i class="fa-brands fa-snapchat"></i></a>
+            <a href="#"><i class="fa-brands fa-whatsapp"></i></a>
+            <a href="#"><i class="fa-brands fa-discord"></i></a>
+            <a href="#"><i class="fa-brands fa-reddit"></i></a>
+        </div>
+    </div>
+    
+    </div>
+</footer>
+  
+
+
+<!-- Notification Modal -->
+<div class="modal fade" id="notificationModal" tabindex="-1" aria-labelledby="notificationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="notificationModalLabel">Notification</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Item has been successfully added to your <span id="notificationType"></span>!
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let index = 0;
+    
+    function moveSlide(step) {
+        const slider = document.querySelector('.slider');
+        const images = document.querySelectorAll('.slider img');
+        const totalImages = images.length;
+        
+        index = (index + step + totalImages) % totalImages;
+        slider.style.transform = `translateX(-${index * 100}%)`;
+    }
+
+    // Auto slide every 3 seconds
+    setInterval(() => moveSlide(1), 3000);
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+
+  // Function to add item to cart
+    function addToCart(product, price, image) {
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        const existingItem = cart.find(item => item.product === product);
+        if (existingItem) {
+            existingItem.quantity += 1; // Increment quantity if item exists
+        } else {
+            cart.push({ product, price, image, quantity: 1 }); // Store item details
+        }
+        localStorage.setItem('cart', JSON.stringify(cart));
+        showNotification('cart');
+    }
+
+    // Function to add item to wishlist
+    function addToWishlist(product, price, image) {
+        let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+        if (!wishlist.find(item => item.product === product)) {
+            wishlist.push({ product, price, image }); // Store product name, price, and image
+            localStorage.setItem('wishlist', JSON.stringify(wishlist));
+            showNotification('wishlist');
+        } else {
+            alert(`${product} is already in your wishlist.`);
+        }
+    }
+
+
+    // Update cart count in the header
+    function updateCartCount() {
+        const cartCount = cart.length;
+        document.getElementById('cart-count').textContent = cartCount;
+    }
+
+    // Redirect to cart.html when bag icon is clicked
+    function redirectToCart() {
+        window.location.href = "cart.html";
+    }
+function redirectToWishlist() {
+    window.location.href = "wishlist.html"; 
+}
+
+    function redirectToLogin() {
+        window.location.href = "login.html";
+    }
+
+    function showClothes(gender) {
+        const menSection = document.getElementById('men-clothes');
+        const womenSection = document.getElementById('women-clothes');
+        const menCategories = document.getElementById('men-categories');
+        const womenCategories = document.getElementById('women-categories');
+
+        menSection.style.display = 'none';
+        womenSection.style.display = 'none';
+        menCategories.style.display = 'none';
+        womenCategories.style.display = 'none';
+
+        removeHeadings();
+
+        if (gender === 'both') {
+            menSection.style.display = 'block';
+            womenSection.style.display = 'block';
+            menCategories.style.display = 'block';
+            womenCategories.style.display = 'block';
+
+            if (!document.getElementById('men-heading')) {
+                menSection.insertAdjacentHTML('beforebegin', '<h2 class="text-center mt-4" id="men-heading">Men\'s Clothing</h2>');
+            }
+            if (!document.getElementById('women-heading')) {
+                womenSection.insertAdjacentHTML('beforebegin', '<h2 class="text-center mt-4" id="women-heading">Women\'s Clothing</h2>');
+            }
+        } else if (gender === 'men') {
+            menSection.style.display = 'block';
+            menCategories.style.display = 'block';
+
+            if (!document.getElementById('men-heading')) {
+                menSection.insertAdjacentHTML('beforebegin', '<h2 class="text-center mt-4" id="men-heading">Men\'s Clothing</h2>');
+            }
+        } else if (gender === 'women') {
+            womenSection.style.display = 'block';
+            womenCategories.style.display = 'block'; 
+
+            if (!document.getElementById('women-heading')) {
+                womenSection.insertAdjacentHTML('beforebegin', '<h2 class="text-center mt-4" id="women-heading">Women\'s Clothing</h2>');
+            }
+        }
+    }
+
+    function removeHeadings() {
+        const menHeading = document.getElementById('men-heading');
+        const womenHeading = document.getElementById('women-heading');
+
+        if (menHeading) menHeading.remove();
+        if (womenHeading) womenHeading.remove();
+    }
+
+    function addToWishlist(product) {
+        if (!wishlist.includes(product)) {
+            wishlist.push(product);
+            localStorage.setItem('wishlist', JSON.stringify(wishlist));
+            showNotification('wishlist');
+        } else {
+            alert(`${product} is already in your wishlist.`);
+        }
+    }
+
+    function showNotification(type) {
+        const notificationType = document.getElementById('notificationType');
+        notificationType.textContent = type === 'cart' ? 'Cart' : 'Wishlist';
+        const notificationModal = new bootstrap.Modal(document.getElementById('notificationModal'));
+        notificationModal.show();
+    }
+
+    window.onload = function () {
+        updateCartCount();
+    };
+
+    // Search Products
+    function searchProducts() {
+        const searchInput = document.getElementById('search-input').value.toLowerCase();
+        const products = document.querySelectorAll('.clothing-item');
+
+        products.forEach(product => {
+            const productName = product.querySelector('h3').textContent.toLowerCase();
+
+            if (productName.includes(searchInput)) {
+                product.style.display = 'block';
+            } else {
+                product.style.display = 'none';
+            }
+        });
+
+        // Show or hide the respective headings based on the search
+        removeHeadings(); 
+        if (searchInput) {
+            document.getElementById('men-clothes').style.display = 'block';
+            document.getElementById('women-clothes').style.display = 'block';
+
+            if (products.length > 0) {
+                document.getElementById('men-clothes').insertAdjacentHTML('beforebegin', '<h2 class="text-center mt-4" id="men-heading">Men\'s Clothing</h2>');
+                document.getElementById('women-clothes').insertAdjacentHTML('beforebegin', '<h2 class="text-center mt-4" id="women-heading">Women\'s Clothing</h2>');
+            }
+        }
+    }
+
+    // Filter Men's Clothing by Category
+    function filterMen(category) {
+        const menItems = document.querySelectorAll('#men-clothes .clothing-item');
+        menItems.forEach(item => {
+            const itemCategory = item.dataset.category;
+            item.style.display = (itemCategory === category) ? 'block' : 'none';
+        });
+    }
+
+    // Filter Women's Clothing by Category
+    function filterWomen(category) {
+        const womenItems = document.querySelectorAll('#women-clothes .clothing-item');
+        womenItems.forEach(item => {
+            const itemCategory = item.dataset.category;
+            item.style.display = (itemCategory === category) ? 'block' : 'none';
+        });
+    }
+
+    // Apply Filters
+    function applyFilters() {
+        const sizeFilter = document.getElementById('size-filter').value;
+        const priceFilter = parseInt(document.getElementById('price-filter').value);
+        const colorFilter = document.getElementById('color-filter').value;
+        const ratingFilter = parseInt(document.getElementById('rating-filter').value);
+
+        const products = document.querySelectorAll('.clothing-item');
+        
+        products.forEach(product => {
+            const productSize = product.dataset.size;
+            const productPrice = parseInt(product.dataset.price);
+            const productColor = product.dataset.color;
+            const productRating = parseInt(product.dataset.rating);
+
+            let showProduct = true;
+
+            if (sizeFilter && productSize !== sizeFilter) showProduct = false;
+            if (productPrice > priceFilter) showProduct = false;
+            if (colorFilter && productColor !== colorFilter) showProduct = false;
+            if (ratingFilter && productRating < ratingFilter) showProduct = false;
+
+            product.style.display = showProduct ? 'block' : 'none';
+        });
+
+        document.getElementById('price-value').textContent = priceFilter;
+    }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
