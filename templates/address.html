@@ -4,145 +4,75 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shipping Address</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            background-image: url('https://images8.alphacoders.com/132/thumb-1920-1323371.png');
-            background-size: cover; 
-            background-position: center; 
-            background-repeat: no-repeat; 
-            background-attachment: fixed; 
-            font-family: 'Inter', sans-serif;
+            font-family: 'Poppins', sans-serif;
+            margin: 20px;
+            background-color: #f8f9fa;
         }
-
         .address-container {
             max-width: 600px;
             margin: 0 auto;
             padding: 20px;
-            background-color: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-            animation: fadeInUp 0.8s ease-out;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-            opacity: 0;
-            animation: slideInUp 0.6s ease forwards;
-        }
-
-        .form-group label {
-            font-weight: bold;
-            margin-bottom: 5px;
-            display: block;
-            opacity: 0;
-            animation: fadeIn 0.5s ease forwards;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #e5e7eb;
+            background-color: white;
             border-radius: 8px;
-            font-size: 1rem;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
-
-        .form-group input:focus {
-            border-color: #10B981;
-            box-shadow: 0 0 8px rgba(16, 185, 129, 0.3);
-        }
-
-        .submit-btn {
-            background-color: #10B981;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
+        h2 {
+            margin-bottom: 20px;
             text-align: center;
+        }
+        footer {
+            background-color: #343a40;
+            color: white;
+            text-align: center;
+            padding: 1rem;
             margin-top: 20px;
-            display: block;
-            width: 100%;
-            transition: background-color 0.3s ease, transform 0.3s ease;
-            animation: slideInUp 0.8s ease forwards;
-        }
-
-        .submit-btn:hover {
-            background-color: #059669;
-            transform: translateY(-3px);
-        }
-
-        /* Animations */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
-        }
-
-        @keyframes slideInUp {
-            from {
-                transform: translateY(20px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
         }
     </style>
 </head>
 <body>
-    <div class="container mx-auto mt-10">
+    <div class="container">
         <div class="address-container">
-            <h1 class="text-3xl font-bold mb-6 text-center">Enter Shipping Address</h1>
+            <h2>Enter Shipping Address</h2>
             <form action="{{ url_for('submit_address') }}" method="POST">
-                <div class="form-group" style="animation-delay: 0.1s;">
-                    <label for="name">Full Name</label>
-                    <input type="text" id="name" name="name" required>
+                <div class="mb-3">
+                    <label for="name" class="form-label">Full Name</label>
+                    <input type="text" class="form-control" id="name" name="name" required>
                 </div>
-
-                <div class="form-group" style="animation-delay: 0.2s;">
-                    <label for="address">Address</label>
-                    <input type="text" id="address" name="address" required>
+                <div class="mb-3">
+                    <label for="address" class="form-label">Address</label>
+                    <input type="text" class="form-control" id="address" name="address" required>
                 </div>
-
-                <div class="form-group" style="animation-delay: 0.3s;">
-                    <label for="city">City</label>
-                    <input type="text" id="city" name="city" required>
+                <div class="mb-3">
+                    <label for="city" class="form-label">City</label>
+                    <input type="text" class="form-control" id="city" name="city" required>
                 </div>
-
-                <div class="form-group" style="animation-delay: 0.4s;">
-                    <label for="pincode">Pincode</label>
-                    <input type="text" id="pincode" name="pincode" required>
+                <div class="mb-3">
+                    <label for="pincode" class="form-label">Pincode</label>
+                    <input type="text" class="form-control" id="pincode" name="pincode" required>
                 </div>
-
-                <div class="form-group" style="animation-delay: 0.5s;">
-                    <label for="phone">Phone Number</label>
-                    <input type="text" id="phone" name="phone" required>
+                <div class="mb-3">
+                    <label for="phone" class="form-label">Phone Number</label>
+                    <input type="text" class="form-control" id="phone" name="phone" required>
                 </div>
-
-                <div class="form-group" style="animation-delay: 0.6s;">
-                    <label for="email">Gmail</label>
-                    <input type="email" id="email" name="email" required>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" name="email" required>
                 </div>
-
-                <button type="submit" class="submit-btn" style="animation-delay: 0.7s;">Submit</button>
+                <button type="submit" class="btn btn-primary w-100">Submit</button>
             </form>
         </div>
     </div>
+
+    <!-- Footer Section -->
+    <footer>
+        <p>&copy; 2024 FashionFusion. All rights reserved.</p>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

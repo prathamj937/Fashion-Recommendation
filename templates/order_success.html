@@ -197,7 +197,7 @@
         <p>Your order has been successfully placed.</p>
         <p>We appreciate your business and hope you enjoy your purchase.</p>
 
-        <a href="{{ url_for('login') }}" class="btn">Exit</a>
+        <a href="{{ url_for('home') }}" class="btn">Exit</a>
     </div>
 
     <div class="chatbot-icon" id="chatbotIcon">
@@ -229,39 +229,67 @@
         const chatbotBody = document.getElementById('chatbotBody');
         const chatbotInput = document.getElementById('chatbotInput');
         const chatbotSendBtn = document.getElementById('chatbotSendBtn');
-
+    
+        // Check if Gemini is loaded
+        let geminiInitialized = false;
+        let geminiModel = null;
+    
+        function initializeGemini() {
+            try {
+                const GEMINI_API_KEY = 'YOUR_API_KEY_HERE'; // Replace with your actual API key
+                const genAI = new google.generativeai.GenerativeAI(GEMINI_API_KEY);
+                geminiModel = genAI.getGenerativeModel({ model: "gemini-pro" });
+                geminiInitialized = true;
+                console.log("Gemini initialized successfully");
+            } catch (error) {
+                console.error("Error initializing Gemini:", error);
+                geminiInitialized = false;
+            }
+        }
+    
+        // Initialize when the SDK is loaded
+        if (typeof google !== 'undefined' && google.generativeai) {
+            initializeGemini();
+        } else {
+            // Fallback in case the SDK doesn't load
+            console.warn("Gemini SDK not loaded, using fallback FAQ system");
+            geminiInitialized = false;
+        }
+    
+        // Fallback FAQ data
         const faqData = [
             { question: "When will my order arrive?", answer: "Orders typically arrive within 5-7 business days." },
-            { question: "How do I track my order?", answer: "You can track your order using the tracking number provided in the confirmation email." },
+            { question: "How do I track my order?", answer: "You can track your order using the tracking number provided in your confirmation email." },
             { question: "Can I change or cancel my order?", answer: "Yes, you can change or cancel your order within 24 hours of placing it." },
-            { question: "What is your return policy?", answer: "We offer a 7-day return policy on all items." }
+            { question: "What is your return policy?", answer: "We offer a 7-day return policy on all items." },
+            { question: "What payment methods do you accept?", answer: "We accept credit/debit cards, PayPal, Apple Pay, and Google Pay." }
         ];
-
+    
         window.addEventListener('load', () => {
             spinner.style.display = 'none';
             body.style.opacity = '1';
             container.style.transform = 'translateY(0)';
             container.style.opacity = '1';
+            
+            // Initial greeting
+            displayMessage("Hi there! I'm your FashionFusion assistant. How can I help you today?", false);
         });
-
+    
         chatbotIcon.addEventListener('click', () => {
             chatbotContainer.style.display = 'block';
-            chatbotContainer.style.opacity = '1';
+            setTimeout(() => {
+                chatbotContainer.style.opacity = '1';
+                chatbotInput.focus();
+            }, 10);
         });
-
+    
         chatbotClose.addEventListener('click', () => {
             chatbotContainer.style.opacity = '0';
             setTimeout(() => {
                 chatbotContainer.style.display = 'none';
             }, 300);
         });
-
-        function findAnswer(question) {
-            const lowerCaseQuestion = question.toLowerCase();
-            const faq = faqData.find(faq => lowerCaseQuestion.includes(faq.question.toLowerCase()));
-            return faq ? faq.answer : "I'm sorry, I don't have an answer for that. Please check our FAQs.";
-        }
-
+    
         function displayMessage(message, isUser = false) {
             const messageDiv = document.createElement('div');
             messageDiv.textContent = message;
@@ -270,21 +298,86 @@
             chatbotBody.appendChild(messageDiv);
             chatbotBody.scrollTop = chatbotBody.scrollHeight;
         }
-
-        chatbotSendBtn.addEventListener('click', () => {
+    
+        function showTypingIndicator() {
+            const typingDiv = document.createElement('div');
+            typingDiv.id = 'typingIndicator';
+            typingDiv.innerHTML = `
+                <div style="display:flex;gap:4px;">
+                    <div style="width:8px;height:8px;background:#6b7280;border-radius:50%;animation:typing 1s infinite"></div>
+                    <div style="width:8px;height:8px;background:#6b7280;border-radius:50%;animation:typing 1s infinite 0.2s"></div>
+                    <div style="width:8px;height:8px;background:#6b7280;border-radius:50%;animation:typing 1s infinite 0.4s"></div>
+                </div>
+                <style>
+                    @keyframes typing {
+                        0%, 60%, 100% { transform: translateY(0); opacity:0.6; }
+                        30% { transform: translateY(-3px); opacity:1; }
+                    }
+                </style>
+            `;
+            chatbotBody.appendChild(typingDiv);
+            chatbotBody.scrollTop = chatbotBody.scrollHeight;
+        }
+    
+        function hideTypingIndicator() {
+            const indicator = document.getElementById('typingIndicator');
+            if (indicator) indicator.remove();
+        }
+    
+        function findFallbackAnswer(question) {
+            const lowerCaseQuestion = question.toLowerCase();
+            const faq = faqData.find(faq => 
+                lowerCaseQuestion.includes(faq.question.toLowerCase().split(' ')[0]) ||
+                faq.question.toLowerCase().includes(lowerCaseQuestion.split(' ')[0])
+            );
+            return faq ? faq.answer : "I'm sorry, I don't have an answer for that. Please contact our support team for assistance.";
+        }
+    
+        async function getAIResponse(userQuestion) {
+            if (!geminiInitialized) {
+                return findFallbackAnswer(userQuestion);
+            }
+    
+            try {
+                showTypingIndicator();
+                
+                const ecommerceContext = `
+                You are FashionFusion's AI shopping assistant. Here are key policies:
+                - Shipping: 5-7 business days (free over $50)
+                - Returns: 7-day policy, items must be unworn
+                - Payments: Credit cards, PayPal, Apple/Google Pay
+                - Contact: support@fashionfusion.com or (800) 123-4567
+                
+                Respond concisely and helpfully to: "${userQuestion}"
+                `;
+                
+                const result = await geminiModel.generateContent(ecommerceContext);
+                const response = await result.response;
+                const text = response.text();
+                
+                hideTypingIndicator();
+                return text;
+            } catch (error) {
+                console.error("AI Error:", error);
+                hideTypingIndicator();
+                return findFallbackAnswer(userQuestion);
+            }
+        }
+    
+        async function handleUserMessage() {
             const userQuestion = chatbotInput.value.trim();
-            if (userQuestion) {
-                displayMessage(userQuestion, true);
-                const answer = findAnswer(userQuestion);
-                displayMessage(answer);
-                chatbotInput.value = '';
-            }
-        });
-
+            if (!userQuestion) return;
+            
+            displayMessage(userQuestion, true);
+            chatbotInput.value = '';
+            
+            const response = await getAIResponse(userQuestion);
+            displayMessage(response, false);
+        }
+    
+        chatbotSendBtn.addEventListener('click', handleUserMessage);
         chatbotInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                chatbotSendBtn.click();
-            }
+            if (e.key === 'Enter') handleUserMessage();
         });
     </script>
 </body>

@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -6,214 +6,154 @@
     <title>Recommended Outfits</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <style>
-        body {
-            /* background-image: url('https://images8.alphacoders.com/132/thumb-1920-1323371.png'); */
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-            font-family: 'Inter', sans-serif;
+        .product-card {
+            transition: all 0.3s ease;
         }
-
-        h1 {
-            color: #1F2937;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.15);
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
         }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .bg-white {
-            transition: transform 0.5s ease, box-shadow 0.3s ease, opacity 0.3s ease;
-            background-color: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        .product-image-container {
+            height: 300px;
             overflow: hidden;
-            position: relative;
-            cursor: pointer;
         }
-
-        .bg-white:hover {
-            transform: translateY(-10px) rotate(1deg);
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
-            opacity: 0.95;
+        .product-image {
+            transition: transform 0.5s ease;
         }
-
-        img {
-            border-radius: 12px;
-            transition: transform 0.4s ease, opacity 0.3s ease;
-        }
-
-        .bg-white:hover img {
+        .product-card:hover .product-image {
             transform: scale(1.05);
-            opacity: 0.9;
-        }
-
-        .main-content h2 {
-            color: #111827;
-            margin-top: 8px;
-            font-size: 1.25rem;
-        }
-
-        .main-content p {
-            color: #374151;
-            margin-top: 4px;
-        }
-
-        .price {
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: #1F2937;
-        }
-
-        .bg-gray-200 {
-            border-radius: 12px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: #6B7280;
-            font-size: 1rem;
-            height: 12rem;
-        }
-
-        .product-info {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background-color: rgba(0, 0, 0, 0.8);
-            color: #fff;
-            padding: 10px;
-            font-size: 0.875rem;
-            opacity: 0;
-            transform: translateY(100%);
-            transition: opacity 0.3s ease, transform 0.4s ease;
-            z-index: 10;
-        }
-
-        .bg-white:hover .product-info {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .product-info h3 {
-            margin: 0;
-            font-size: 1rem;
-            font-weight: 600;
-        }
-
-        .product-info p {
-            margin: 5px 0;
-        }
-
-        .main-content {
-            position: relative;
-            z-index: 1;
-        }
-
-        a.product-link {
-            text-decoration: none;
-            color: inherit;
-            display: block;
-        }
-
-        .cart-icon {
-            position: fixed;
-            top: 20px;
-            right: 30px;
-            cursor: pointer;
-            z-index: 1000;
-        }
-
-        .cart-icon img {
-            width: 50px;
-            transition: transform 0.3s ease;
-        }
-
-        .cart-icon img:hover {
-            transform: rotate(10deg) scale(1.1);
-        }
-
-        .sorting-form {
-            display: flex;
-            justify-content: flex-end;
-            margin-bottom: 1rem;
-        }
-
-        .sorting-form select {
-            border: 1px solid #D1D5DB;
-            border-radius: 8px;
-            padding: 8px;
-            font-size: 1rem;
-            color: #374151;
-            transition: background-color 0.3s ease, transform 0.3s ease;
-        }
-
-        .sorting-form select:hover {
-            background-color: #f0f0f0;
-            transform: scale(1.05);
-        }
-
-        .footer {
-            margin-top: 40px;
-            text-align: center;
-            color: #ffffff;
-            font-size: 0.875rem;
-            padding: 20px;
-            background-color: rgba(0, 0, 0, 0.6);
         }
     </style>
 </head>
-<body>
-    <div class="cart-icon">
-        <a href="{{ url_for('view_cart') }}">
-            <img src="https://cdn-icons-png.flaticon.com/512/833/833314.png" alt="Cart">
+<body class="bg-gray-50">
+    <!-- Navigation Cart -->
+    <div class="fixed top-5 right-5 z-50">
+        <a href="{{ url_for('view_cart') }}" class="bg-white p-3 rounded-full shadow-lg flex items-center justify-center">
+            <img src="https://cdn-icons-png.flaticon.com/512/833/833314.png" alt="Shopping Cart" class="w-8 h-8">
+            {% if 'cart' in session and session['cart'] %}
+                <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    {{ session['cart']|length }}
+                </span>
+            {% endif %}
         </a>
     </div>
 
-    <div class="container mx-auto mt-10">
-        <h1 class="text-4xl font-bold text-center mb-8">Recommended Outfits Based on Your Analysis</h1>
+    <div class="container mx-auto px-4 py-12">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-gray-800 mb-3">Your Perfect Outfits</h1>
+            <p class="text-gray-600 max-w-2xl mx-auto">
+                We've selected these items based on your hair type, face shape, and body type
+            </p>
+        </div>
 
-        <form method="GET" action="{{ url_for('recommendations') }}" class="sorting-form">
-            <select name="sort" onchange="this.form.submit()">
-                <option value="" disabled selected>Sort by</option>
-                <option value="price_asc" {% if sort == 'price_asc' %}selected{% endif %}>Price: Low to High</option>
-                <option value="price_desc" {% if sort == 'price_desc' %}selected{% endif %}>Price: High to Low</option>
-            </select>
-        </form>
+        <!-- Sorting and Results Count -->
+        <div class="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
+            <div class="text-sm text-gray-600">
+                Showing <span class="font-medium">{{ clothes|length }}</span> matching items
+            </div>
+            <form method="GET" action="{{ url_for('recommendations') }}" class="flex items-center gap-2">
+                <label for="sort" class="text-gray-700">Sort by:</label>
+                <select name="sort" onchange="this.form.submit()" 
+                        class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="best_match" {% if sort == 'best_match' %}selected{% endif %}>Best Match</option>
+                    <option value="price_asc" {% if sort == 'price_asc' %}selected{% endif %}>Price: Low to High</option>
+                    <option value="price_desc" {% if sort == 'price_desc' %}selected{% endif %}>Price: High to Low</option>
+                </select>
+            </form>
+        </div>
 
-        <div class="grid mt-8">
+        <!-- Recommendations Grid -->
+        {% if not clothes %}
+        <div class="bg-white rounded-xl shadow-md p-8 text-center max-w-2xl mx-auto">
+            <div class="text-5xl mb-4">👗</div>
+            <h2 class="text-2xl font-semibold text-gray-800 mb-3">No Perfect Matches Found</h2>
+            <p class="text-gray-600 mb-6">
+                We couldn't find outfits that match all your attributes perfectly. 
+                Try adjusting your preferences or check back later for new arrivals.
+            </p>
+            <div class="flex gap-4 justify-center">
+                <a href="{{ url_for('home') }}" class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition">
+                    Analyze Again
+                </a>
+                <a href="{{ url_for('gender_selection') }}" class="bg-gray-200 text-gray-700 px-6 py-2 rounded-md hover:bg-gray-300 transition">
+                    Change Gender
+                </a>
+            </div>
+        </div>
+        {% else %}
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
             {% for item in clothes %}
-            <a href="{{ url_for('product_page', product_id=item['id']) }}" target="_blank" class="product-link">
-                <div class="bg-white shadow-md rounded-lg p-6">
-                    <div class="main-content">
+            <div class="product-card bg-white rounded-xl overflow-hidden shadow-md">
+                <a href="{{ url_for('product_page', product_id=item['id']) }}" class="block">
+                    <div class="product-image-container relative">
                         {% if item['image'] %}
-                            <img src="{{ item['image'] }}" alt="{{ item['name'] }}" class="w-full h-48 object-cover">
+                            <img src="{{ item['image'] }}" alt="{{ item['name'] }}" 
+                                 class="product-image w-full h-full object-cover"
+                                 onerror="this.onerror=null;this.src='https://via.placeholder.com/300?text=Image+Not+Available';">
                         {% else %}
-                            <div class="w-full h-48 bg-gray-200">
-                                <span>No Image Available</span>
+                            <div class="w-full h-full bg-gray-200 flex items-center justify-center">
+                                <span class="text-gray-500">No Image Available</span>
                             </div>
                         {% endif %}
-                        <h2 class="text-lg font-bold">{{ item['name'] }}</h2>
-                        <p class="price">${{ item['price'] }}</p>
+                        <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4 text-white">
+                            <p class="text-sm">${{ "%.2f"|format(item['price']) }}</p>
+                        </div>
                     </div>
-
-                    <div class="product-info">
-                        <h3>{{ item['name'] }}</h3>
-                        <p>Material: {{ item['material'] }}</p>
-                        <p>Size: {{ item['size'] }}</p>
+                    <div class="p-5">
+                        <h3 class="font-semibold text-lg text-gray-800 mb-2">{{ item['name'] }}</h3>
+                        <div class="flex justify-between text-sm text-gray-600">
+                            <span>Size: {{ item.get('size', 'N/A') }}</span>
+                            <span>Material: {{ item.get('material', 'N/A') }}</span>
+                        </div>
                     </div>
+                </a>
+                <div class="px-5 pb-5">
+                    <form action="{{ url_for('add_to_cart', product_id=item['id']) }}" method="POST">
+                        <button type="submit" 
+                                class="w-full bg-gray-900 text-white py-2 rounded-md hover:bg-gray-800 transition flex items-center justify-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
+                            </svg>
+                            Add to Cart
+                        </button>
+                    </form>
                 </div>
-            </a>
+            </div>
             {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Back Button -->
+        <div class="mt-12 text-center">
+            <a href="{{ url_for('home') }}" 
+               class="inline-flex items-center gap-2 bg-gray-200 text-gray-700 px-6 py-3 rounded-md hover:bg-gray-300 transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                </svg>
+                Back to Analysis
+            </a>
         </div>
     </div>
 
-    <footer class="footer">
-        &copy; 2024 FashionFusion. All rights reserved.
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8 mt-16">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <h3 class="text-xl font-bold">FashionFusion</h3>
+                    <p class="text-gray-400 mt-1">Your personalized styling assistant</p>
+                </div>
+                <div class="flex gap-6">
+                    <a href="#" class="text-gray-400 hover:text-white transition">Privacy</a>
+                    <a href="#" class="text-gray-400 hover:text-white transition">Terms</a>
+                    <a href="#" class="text-gray-400 hover:text-white transition">Contact</a>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-6 pt-6 text-center text-gray-400 text-sm">
+                &copy; 2024 FashionFusion. All rights reserved.
+            </div>
+        </div>
     </footer>
 </body>
 </html>

@@ -9,29 +9,15 @@ import razorpay
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import URLSafeTimedSerializer
 from flask_mail import Mail, Message
-import time
-import pandas as pd
 import hmac
 import hashlib
-import tensorflow as tf
-import tf2onnx
 import mediapipe as mp
 
-# Razorpay credentials
-RAZORPAY_KEY_ID = "rzp_test_thbnstH0BXXXX"
-RAZORPAY_KEY_SECRET = "oc86adrgm685ECs3WzdXXXX"
-razorpay_client = razorpay.Client(auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET))
-
-# Flask app setup
+# Initialize Flask app
 app = Flask(__name__)
 
-# MySQL configuration
-app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'Messipratham30'
-app.config['MYSQL_DB'] = 'clothing_recommendations'
-mysql = MySQL(app)
-
+# Configuration
+# --------------------------------------
 # Secret key and mail configuration
 app.secret_key = os.urandom(24)
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
@@ -43,12 +29,23 @@ app.config['MAIL_USE_SSL'] = False
 mail = Mail(app)
 s = URLSafeTimedSerializer(app.secret_key)
 
+# MySQL configuration
+app.config['MYSQL_HOST'] = 'localhost'
+app.config['MYSQL_USER'] = 'root'
+app.config['MYSQL_PASSWORD'] = 'Messipratham30'
+app.config['MYSQL_DB'] = 'clothing_recommendations'
+mysql = MySQL(app)
+
+# Razorpay credentials
+RAZORPAY_KEY_ID = "rzp_test_thbnstH0BXXXX"
+RAZORPAY_KEY_SECRET = "oc86adrgm685ECs3WzdXXXX"
+razorpay_client = razorpay.Client(auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET))
+
 # Upload folder setup
 UPLOAD_FOLDER = 'static/uploads'
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
 # Initialize MediaPipe models
@@ -57,10 +54,160 @@ mp_pose = mp.solutions.pose
 face_mesh = mp_face_mesh.FaceMesh(max_num_faces=1)
 pose = mp_pose.Pose()
 
+# Clothing Recommendations Data
+# --------------------------------------
+clothing_recommendations = {
+    "male": {
+        "hair_type": {
+            "Long Hair": [
+                {"id": 1, "name": "Slim Fit Shirt", "price": 29.99, 
+                 "image": "https://m.media-amazon.com/images/I/61-8Lx8QpZL._AC_UY1100_.jpg", 
+                 "material": "Cotton", "size": "M"},
+                {"id": 2, "name": "Skinny Jeans", "price": 49.99, 
+                 "image": "https://m.media-amazon.com/images/I/71HnHYXk5VL._AC_UL1500_.jpg", 
+                 "material": "Denim", "size": "32"}
+            ],
+            "Short Hair": [
+                {"id": 3, "name": "Polo Shirt", "price": 24.99, 
+                 "image": "https://m.media-amazon.com/images/I/71+nTJ8M8VL._AC_UL1500_.jpg", 
+                 "material": "Polyester", "size": "L"},
+                {"id": 4, "name": "Cargo Pants", "price": 39.99, 
+                 "image": "https://m.media-amazon.com/images/I/71S8U9VzLTL._AC_UL1500_.jpg", 
+                 "material": "Cotton Blend", "size": "34"}
+            ]
+        },
+        "face_shape": {
+            "Oval Face": [
+                {"id": 5, "name": "V-Neck Sweater", "price": 45.99, 
+                 "image": "https://m.media-amazon.com/images/I/71Q4hXUzHhL._AC_UL1500_.jpg", 
+                 "material": "Wool", "size": "M"},
+                {"id": 6, "name": "Tailored Blazer", "price": 79.99,
+                 "image": "https://m.media-amazon.com/images/I/71+nTJ8M8VL._AC_UL1500_.jpg",
+                 "material": "Wool Blend", "size": "L"}
+            ],
+            "Round Face": [
+                {"id": 7, "name": "Denim Jacket", "price": 59.99, 
+                 "image": "https://m.media-amazon.com/images/I/71+nTJ8M8VL._AC_UL1500_.jpg", 
+                 "material": "Denim", "size": "L"},
+                {"id": 8, "name": "Crew Neck Sweater", "price": 39.99,
+                 "image": "https://m.media-amazon.com/images/I/71+nTJ8M8VL._AC_UL1500_.jpg",
+                 "material": "Cotton", "size": "XL"}
+            ],
+            "Square Face": [
+                {"id": 9, "name": "Turtleneck Sweater", "price": 39.99, 
+                 "image": "https://m.media-amazon.com/images/I/71+nTJ8M8VL._AC_UL1500_.jpg", 
+                 "material": "Wool Blend", "size": "XL"},
+                {"id": 10, "name": "Button-Up Shirt", "price": 34.99,
+                 "image": "https://m.media-amazon.com/images/I/71+nTJ8M8VL._AC_UL1500_.jpg",
+                 "material": "Cotton", "size": "M"}
+            ]
+        },
+        "body_shape": {
+            "Inverted Triangle Body": [
+                {"id": 11, "name": "Fitted Blazer", "price": 89.99, 
+                 "image": "https://m.media-amazon.com/images/I/71+nTJ8M8VL._AC_UL1500_.jpg", 
+                 "material": "Wool", "size": "L"},
+                {"id": 12, "name": "Slim Fit Chinos", "price": 49.99,
+                 "image": "https://m.media-amazon.com/images/I/71+nTJ8M8VL._AC_UL1500_.jpg",
+                 "material": "Cotton", "size": "34"}
+            ],
+            "Pear-Shaped Body": [
+                {"id": 13, "name": "Straight Fit Jeans", "price": 49.99, 
+                 "image": "https://m.media-amazon.com/images/I/71+nTJ8M8VL._AC_UL1500_.jpg", 
+                 "material": "Denim", "size": "36"},
+                {"id": 14, "name": "Patterned Shirt", "price": 39.99,
+                 "image": "https://m.media-amazon.com/images/I/71+nTJ8M8VL._AC_UL1500_.jpg",
+                 "material": "Cotton", "size": "L"}
+            ],
+            "Rectangular Body": [
+                {"id": 15, "name": "Casual Button-Up", "price": 34.99, 
+                 "image": "https://m.media-amazon.com/images/I/71+nTJ8M8VL._AC_UL1500_.jpg", 
+                 "material": "Cotton", "size": "M"},
+                {"id": 16, "name": "Fitted Sweater", "price": 44.99,
+                 "image": "https://m.media-amazon.com/images/I/71+nTJ8M8VL._AC_UL1500_.jpg",
+                 "material": "Wool Blend", "size": "L"}
+            ]
+        }
+    },
+    "female": {
+        "hair_type": {
+            "Long Hair": [
+                {"id": 17, "name": "Floral Dress", "price": 39.99, 
+                 "image": "https://m.media-amazon.com/images/I/71+nTJ8M8VL._AC_UL1500_.jpg", 
+                 "material": "Polyester", "size": "S"},
+                {"id": 18, "name": "Maxi Skirt", "price": 29.99,
+                 "image": "https://m.media-amazon.com/images/I/71+nTJ8M8VL._AC_UL1500_.jpg",
+                 "material": "Cotton", "size": "M"}
+            ],
+            "Short Hair": [
+                {"id": 19, "name": "Crop Top", "price": 19.99, 
+                 "image": "https://m.media-amazon.com/images/I/71+nTJ8M8VL._AC_UL1500_.jpg", 
+                 "material": "Cotton", "size": "S"},
+                {"id": 20, "name": "High-Waisted Jeans", "price": 44.99,
+                 "image": "https://m.media-amazon.com/images/I/71+nTJ8M8VL._AC_UL1500_.jpg",
+                 "material": "Denim", "size": "28"}
+            ]
+        },
+        "face_shape": {
+            "Oval Face": [
+                {"id": 21, "name": "Wrap Dress", "price": 49.99, 
+                 "image": "https://m.media-amazon.com/images/I/71+nTJ8M8VL._AC_UL1500_.jpg", 
+                 "material": "Polyester", "size": "M"},
+                {"id": 22, "name": "V-Neck Blouse", "price": 29.99,
+                 "image": "https://m.media-amazon.com/images/I/71+nTJ8M8VL._AC_UL1500_.jpg",
+                 "material": "Silk", "size": "S"}
+            ],
+            "Round Face": [
+                {"id": 23, "name": "V-Neck Top", "price": 24.99, 
+                 "image": "https://m.media-amazon.com/images/I/71+nTJ8M8VL._AC_UL1500_.jpg", 
+                 "material": "Cotton", "size": "S"},
+                {"id": 24, "name": "A-Line Dress", "price": 39.99,
+                 "image": "https://m.media-amazon.com/images/I/71+nTJ8M8VL._AC_UL1500_.jpg",
+                 "material": "Cotton Blend", "size": "M"}
+            ],
+            "Square Face": [
+                {"id": 25, "name": "Off-Shoulder Top", "price": 29.99, 
+                 "image": "https://m.media-amazon.com/images/I/71+nTJ8M8VL._AC_UL1500_.jpg", 
+                 "material": "Cotton Blend", "size": "M"},
+                {"id": 26, "name": "Ruffled Blouse", "price": 34.99,
+                 "image": "https://m.media-amazon.com/images/I/71+nTJ8M8VL._AC_UL1500_.jpg",
+                 "material": "Polyester", "size": "S"}
+            ]
+        },
+        "body_shape": {
+            "Inverted Triangle Body": [
+                {"id": 27, "name": "A-Line Skirt", "price": 34.99, 
+                 "image": "https://m.media-amazon.com/images/I/71+nTJ8M8VL._AC_UL1500_.jpg", 
+                 "material": "Polyester", "size": "M"},
+                {"id": 28, "name": "Fitted Blazer", "price": 69.99,
+                 "image": "https://m.media-amazon.com/images/I/71+nTJ8M8VL._AC_UL1500_.jpg",
+                 "material": "Wool", "size": "S"}
+            ],
+            "Pear-Shaped Body": [
+                {"id": 29, "name": "Flared Jeans", "price": 54.99, 
+                 "image": "https://m.media-amazon.com/images/I/71+nTJ8M8VL._AC_UL1500_.jpg", 
+                 "material": "Denim", "size": "28"},
+                {"id": 30, "name": "Wrap Top", "price": 29.99,
+                 "image": "https://m.media-amazon.com/images/I/71+nTJ8M8VL._AC_UL1500_.jpg",
+                 "material": "Cotton", "size": "M"}
+            ],
+            "Rectangular Body": [
+                {"id": 31, "name": "Belted Dress", "price": 49.99, 
+                 "image": "https://m.media-amazon.com/images/I/71+nTJ8M8VL._AC_UL1500_.jpg", 
+                 "material": "Cotton", "size": "S"},
+                {"id": 32, "name": "Straight Leg Pants", "price": 44.99,
+                 "image": "https://m.media-amazon.com/images/I/71+nTJ8M8VL._AC_UL1500_.jpg",
+                 "material": "Polyester", "size": "6"}
+            ]
+        }
+    }
+}
+
+# Utility Functions
+# --------------------------------------
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-# Updated Analysis Functions
 def analyze_hair(image):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
@@ -119,6 +266,32 @@ def analyze_body(image):
         return "Pear-Shaped Body"
     return "Rectangular Body"
 
+def create_order(amount, currency="INR", receipt=None, notes=None):
+    try:
+        order = razorpay_client.order.create({
+            "amount": amount,  
+            "currency": currency,
+            "receipt": receipt,
+            "notes": notes,
+        })
+        return order
+    except Exception as e:
+        return {"error": str(e)}
+
+def verify_payment_signature(payment_id, order_id, signature):
+    try:
+        payload = f"{order_id}|{payment_id}"
+        generated_signature = hmac.new(
+            RAZORPAY_KEY_SECRET.encode(),
+            payload.encode(),
+            hashlib.sha256
+        ).hexdigest()
+        return generated_signature == signature
+    except Exception as e:
+        return False
+
+# Authentication Routes
+# --------------------------------------
 @app.route('/', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -132,11 +305,14 @@ def login():
         if user and check_password_hash(user['password'], password):
             session['logged_in'] = True
             session['username'] = username
+            session['user_id'] = user['id']
             return redirect(url_for('gender_selection'))
         else:
             flash('Invalid username or password.')
 
-    return render_template('login.html', title="Login", action_url=url_for('login'), button_text="Login", signup=False, show_confirm=False, signup_url=url_for('signup'))
+    return render_template('login.html', title="Login", action_url=url_for('login'), 
+                         button_text="Login", signup=False, show_confirm=False, 
+                         signup_url=url_for('signup'))
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -157,12 +333,15 @@ def signup():
             flash('Username already exists!')
         else:
             hashed_password = generate_password_hash(password)
-            cursor.execute('INSERT INTO users (username, password) VALUES (%s, %s)', (username, hashed_password))
+            cursor.execute('INSERT INTO users (username, password) VALUES (%s, %s)', 
+                         (username, hashed_password))
             mysql.connection.commit()
             flash('Signup successful! Please log in.')
             return redirect(url_for('login'))
 
-    return render_template('login.html', title="Sign Up", action_url=url_for('signup'), button_text="Sign Up", signup=True, show_confirm=True, login_url=url_for('login'))
+    return render_template('login.html', title="Sign Up", action_url=url_for('signup'), 
+                         button_text="Sign Up", signup=True, show_confirm=True, 
+                         login_url=url_for('login'))
 
 @app.route('/forgot_password', methods=['GET', 'POST'])
 def forgot_password():
@@ -206,7 +385,8 @@ def reset_password(token):
         
         hashed_password = generate_password_hash(password)
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute('UPDATE users SET password = %s WHERE email = %s', (hashed_password, email))
+        cursor.execute('UPDATE users SET password = %s WHERE email = %s', 
+                      (hashed_password, email))
         mysql.connection.commit()
 
         flash('Your password has been reset successfully.')
@@ -219,12 +399,19 @@ def google_login():
     flash('Google login is not implemented yet.')
     return redirect(url_for('login'))
 
-
 @app.route('/auth/facebook')
 def facebook_login():
     flash('Facebook login is not implemented yet.')
     return redirect(url_for('login'))
 
+@app.route('/logout')
+def logout():
+    session.clear()
+    flash('You have been logged out.')
+    return redirect(url_for('login'))
+
+# User Flow Routes
+# --------------------------------------
 @app.route('/gender', methods=['GET', 'POST'])
 def gender_selection():
     if 'logged_in' not in session or not session['logged_in']:
@@ -237,51 +424,6 @@ def gender_selection():
         return redirect(url_for('home'))
     
     return render_template('gender_selection.html')
-
-@app.route('/recommendations')
-def recommendations():
-    if 'logged_in' not in session or not session['logged_in']:
-        flash('Please log in to access recommendations.')
-        return redirect(url_for('login'))
-
-    gender = session.get('gender')
-    hair_type = session.get('hair_type')
-    face_shape = session.get('face_shape')
-    body_shape = session.get('body_shape')
-
-    if not gender:
-        flash('Please complete the analysis first.')
-        return redirect(url_for('home'))
-
-    sort_option = request.args.get('sort')
-
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-
-    query = "SELECT id, name, price, image, size, material FROM recommended_clothes WHERE gender = %s"
-    values = [gender]
-
-    if hair_type:
-        query += " AND hair_type = %s"
-        values.append(hair_type)
-
-    if face_shape:
-        query += " AND face_shape = %s"
-        values.append(face_shape)
-
-    if body_shape:
-        query += " AND body_shape = %s"
-        values.append(body_shape)
-
-    if sort_option == 'price_asc':
-        query += " ORDER BY price ASC"
-    elif sort_option == 'price_desc':
-        query += " ORDER BY price DESC"
-
-    cursor.execute(query, tuple(values))
-    recommended_clothes = cursor.fetchall()
-    cursor.close()
-
-    return render_template('recommendations.html', clothes=recommended_clothes, sort=sort_option)
 
 @app.route('/home', methods=['GET', 'POST'])
 def home():
@@ -312,67 +454,167 @@ def home():
             hair_type = analyze_hair(image)
             face_shape = analyze_face(image)
             body_shape = analyze_body(image)
-
+            print(f"Analysis Results - Hair: {hair_type}, Face: {face_shape}, Body: {body_shape}")
             session['hair_type'] = hair_type
             session['face_shape'] = face_shape
             session['body_shape'] = body_shape
 
-            return render_template('index.html', hair_type=hair_type, face_shape=face_shape, body_shape=body_shape)
+            return render_template('index.html', hair_type=hair_type, 
+                                face_shape=face_shape, body_shape=body_shape)
 
     return render_template('index.html')
 
+# Product and Recommendation Routes
+# --------------------------------------
+@app.route('/recommendations')
+def recommendations():
+    if 'logged_in' not in session:
+        flash('Please log in first')
+        return redirect(url_for('login'))
 
-@app.route('/logout')
-def logout():
-    session.clear()
-    flash('You have been logged out.')
-    return redirect(url_for('login'))
+    print("\nSession Data:")
+    print(f"Gender: {session.get('gender')}")
+    print(f"Hair: {session.get('hair_type')}")
+    print(f"Face: {session.get('face_shape')}")
+    print(f"Body: {session.get('body_shape')}\n")
+
+    gender = session.get('gender')
+    if not gender:
+        flash('Please complete the analysis first')
+        return redirect(url_for('home'))
+
+    recommended_items = []
+    
+    if gender.lower() in [g.lower() for g in clothing_recommendations.keys()]:
+        gender_key = [g for g in clothing_recommendations.keys() if g.lower() == gender.lower()][0]
+        gender_recs = clothing_recommendations[gender_key]
+        
+        for attr in ['hair_type', 'face_shape', 'body_shape']:
+            attr_value = session.get(attr)
+            if attr_value and attr in gender_recs:
+                matched_key = next((k for k in gender_recs[attr].keys() 
+                                  if k.lower() == attr_value.lower()), None)
+                if matched_key:
+                    print(f"Found {len(gender_recs[attr][matched_key])} matches for {attr}={matched_key}")
+                    recommended_items.extend(gender_recs[attr][matched_key])
+
+    unique_items = []
+    seen_ids = set()
+    for item in recommended_items:
+        if item['id'] not in seen_ids:
+            seen_ids.add(item['id'])
+            unique_items.append(item)
+
+    if not unique_items and gender.lower() in [g.lower() for g in clothing_recommendations.keys()]:
+        print("No specific matches, showing general recommendations")
+        gender_key = [g for g in clothing_recommendations.keys() if g.lower() == gender.lower()][0]
+        for category in clothing_recommendations[gender_key].values():
+            for items in category.values():
+                unique_items.extend(items)
+        seen_ids = set()
+        final_items = []
+        for item in unique_items:
+            if item['id'] not in seen_ids:
+                seen_ids.add(item['id'])
+                final_items.append(item)
+        unique_items = final_items[:12]
+
+    sort_option = request.args.get('sort', 'best_match')
+    if sort_option == 'price_asc':
+        unique_items.sort(key=lambda x: x['price'])
+    elif sort_option == 'price_desc':
+        unique_items.sort(key=lambda x: x['price'], reverse=True)
+
+    print(f"\nReturning {len(unique_items)} recommendations\n")
+    
+    return render_template(
+        'recommendations.html',
+        clothes=unique_items,
+        sort=sort_option,
+        user_attrs={
+            'gender': gender,
+            'hair_type': session.get('hair_type'),
+            'face_shape': session.get('face_shape'),
+            'body_shape': session.get('body_shape')
+        }
+    )
 
 @app.route('/product/<int:product_id>')
 def product_page(product_id):
-    try:
-        cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        query = "SELECT * FROM recommended_clothes WHERE id = %s"
-        cur.execute(query, (product_id,))
-        product = cur.fetchone()
-
-        cur.execute("SELECT * FROM recommended_clothes WHERE material = %s AND id != %s LIMIT 4", (product['material'], product_id))
-        related_products = cur.fetchall()
-
-        cur.execute("SELECT r.rating, r.review_text, u.username FROM reviews r JOIN users u ON r.user_id = u.id WHERE r.product_id = %s", (product_id,))
-        reviews = cur.fetchall()
-        cur.close()
-
+    product = None
+    product_gender = None
+    
+    for gender in clothing_recommendations.keys():
+        for category in clothing_recommendations[gender].values():
+            for items in category.values():
+                for item in items:
+                    if item['id'] == product_id:
+                        product = item
+                        product_gender = gender
+                        break
+                if product:
+                    break
+            if product:
+                break
         if product:
-            return render_template('product_page.html', product=product, reviews=reviews, related_products=related_products)
-        else:
-            flash("Product not found.")
-            return redirect(url_for('recommendations'))
+            break
 
-    except Exception as e:
-        flash(f"An error occurred: {str(e)}")
+    if product:
+        related_products = []
+        if product_gender:
+            for category in clothing_recommendations[product_gender].values():
+                for items in category.values():
+                    related_products.extend(items[:2])
+        
+        related_products = [p for p in related_products if p['id'] != product_id][:4]
+        
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute("SELECT r.rating, r.review_text, u.username FROM reviews r JOIN users u ON r.user_id = u.id WHERE r.product_id = %s", 
+                      (product_id,))
+        reviews = cursor.fetchall()
+        cursor.close()
+        
+        return render_template('product_page.html', 
+                            product=product, 
+                            reviews=reviews, 
+                            related_products=related_products)
+    else:
+        flash("Product not found.")
         return redirect(url_for('recommendations'))
 
 @app.route('/add_to_wishlist/<int:product_id>', methods=['POST'])
 def add_to_wishlist(product_id):
     if 'logged_in' in session:
         user_id = session['user_id']
-        cur = mysql.connection.cursor()
-        cur.execute("INSERT INTO wishlist (user_id, product_id) VALUES (%s, %s)", (user_id, product_id))
+        cursor = mysql.connection.cursor()
+        cursor.execute("INSERT INTO wishlist (user_id, product_id) VALUES (%s, %s)", 
+                      (user_id, product_id))
         mysql.connection.commit()
-        cur.close()
+        cursor.close()
         flash('Added to your wishlist!')
     else:
         flash('Please log in to add items to your wishlist.')
     
     return redirect(url_for('product_page', product_id=product_id))
 
+# Cart Management Routes
+# --------------------------------------
 @app.route('/add_to_cart/<int:product_id>', methods=['POST'])
 def add_to_cart(product_id):
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute("SELECT id, name, price, image FROM recommended_clothes WHERE id = %s", (product_id,))
-    product = cursor.fetchone()
-    cursor.close()
+    product = None
+    for gender in clothing_recommendations.values():
+        for category in gender.values():
+            for items in category.values():
+                for item in items:
+                    if item['id'] == product_id:
+                        product = item
+                        break
+                if product:
+                    break
+            if product:
+                break
+        if product:
+            break
 
     if product:
         cart_item = {
@@ -394,10 +636,10 @@ def add_to_cart(product_id):
             session['cart'].append(cart_item)
 
         flash(f"{product['name']} has been added to your cart.")
+        return redirect(url_for('product_page', product_id=product_id))
     else:
         flash("Product not found.")
-
-    return redirect(url_for('product_page', product_id=product_id))
+        return redirect(url_for('recommendations'))
 
 @app.route('/update_quantity/<int:product_id>', methods=['POST'])
 def update_quantity(product_id):
@@ -410,18 +652,12 @@ def update_quantity(product_id):
                     item['quantity'] += 1
                 elif action == 'decrease' and item['quantity'] > 1:
                     item['quantity'] -= 1
-
-                item['subtotal'] = item['price'] * item['quantity']
                 break
     
-    # Recalculate the total price
     total = sum(item['price'] * item['quantity'] for item in session['cart'])
     session['total'] = total
 
-    # After updating quantity, redirect to the cart view
     return redirect(url_for('view_cart'))
-
-
 
 @app.route('/remove_from_cart/<int:product_id>', methods=['POST'])
 def remove_from_cart(product_id):
@@ -430,67 +666,54 @@ def remove_from_cart(product_id):
     
     return redirect(url_for('view_cart'))
 
-
-@app.route('/checkout')
-def checkout_page():
-    if 'checkout_item' in session:
-        
-        items = [session['checkout_item']]
-        total = session['checkout_item']['price'] * session['checkout_item']['quantity']
-
-    elif 'cart' in session and session['cart']:
-        items = session['cart']
-        total = sum(item['price'] * item['quantity'] for item in items) 
-    else:
-        flash("Your cart is empty.")
-        return redirect(url_for('view_cart'))
-
-    return render_template('checkout.html', items=items, total=total)
-
-@app.route('/place_order', methods=['POST'])
-def place_order():
-    if 'shipping_address' in session:
-        email = session['shipping_address'].get('email')
-        name = session['shipping_address'].get('name')
-        address = session['shipping_address'].get('address')
-        city = session['shipping_address'].get('city')
-        pincode = session['shipping_address'].get('pincode')
-
-        if email:
-            try:
-                msg = Message('Order Confirmation',
-                              sender='your-gmail@example.com',
-                              recipients=[email])
-                msg.body = f"Dear {name},\n\nYour order has been successfully placed.\n\nShipping to: {address}, {city}, {pincode}\n\nThank you for shopping with us!"
-                mail.send(msg)
-                flash('Confirmation email sent successfully!')
-            except Exception as e:
-                flash(f"Failed to send confirmation email: {str(e)}")
-
-    flash('Your order has been placed successfully!')
-    session.pop('cart', None)
-    session.pop('checkout_item', None)
-
-    return redirect(url_for('order_success'))
-
 @app.route('/cart')
 def view_cart():
     cart = session.get('cart', [])
-
     total = sum(item['price'] * item['quantity'] for item in cart)
-
     return render_template('cart.html', cart=cart, total=total)
 
 @app.route('/clear_cart')
 def clear_cart():
     try:
-        session.pop('cart', None)  # Remove 'cart' from session if it exists
+        session.pop('cart', None)
         flash('Cart cleared successfully.')
     except KeyError:
-        flash('No cart found to clear.')  # In case 'cart' key doesn't exist
+        flash('No cart found to clear.')
     except Exception as e:
-        flash(f"An error occurred: {str(e)}")  # Catch any other exceptions
+        flash(f"An error occurred: {str(e)}")
     return redirect(url_for('view_cart'))
+
+# Checkout and Payment Routes
+# --------------------------------------
+@app.route('/buy_now/<int:product_id>', methods=['POST'])
+def buy_now(product_id):
+    product = None
+    for gender in clothing_recommendations.values():
+        for category in gender.values():
+            for items in category.values():
+                for item in items:
+                    if item['id'] == product_id:
+                        product = item
+                        break
+                if product:
+                    break
+            if product:
+                break
+        if product:
+            break
+
+    if product:
+        session['checkout_item'] = {
+            'id': product['id'],
+            'name': product['name'],
+            'price': float(product['price']),
+            'image': product['image'],
+            'quantity': 1
+        }
+        return redirect(url_for('payment'))
+    else:
+        flash("Product not found.")
+        return redirect(url_for('product_page', product_id=product_id))
 
 @app.route('/address', methods=['GET'])
 def address():
@@ -507,7 +730,7 @@ def submit_address():
     city = request.form.get('city')
     pincode = request.form.get('pincode')
     phone = request.form.get('phone')
-    email = request.form.get('email')  
+    email = request.form.get('email')
 
     session['shipping_address'] = {
         'name': name,
@@ -527,7 +750,7 @@ def payment():
         return redirect(url_for('address'))
 
     if 'checkout_item' in session:
-        cart = [session['checkout_item']] 
+        cart = [session['checkout_item']]
         total = session['checkout_item']['price'] * session['checkout_item']['quantity']
     elif 'cart' in session and session['cart']:
         cart = session['cart']
@@ -538,27 +761,45 @@ def payment():
 
     return render_template('payment.html', cart=cart, total=total)
 
-
-@app.route('/buy_now/<int:product_id>', methods=['POST'])
-def buy_now(product_id):
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute("SELECT id, name, price, image FROM recommended_clothes WHERE id = %s", (product_id,))
-    product = cursor.fetchone()
-    cursor.close()
-
-    if product:
-        session['checkout_item'] = {
-            'id': product['id'],
-            'name': product['name'],
-            'price': float(product['price']),
-            'image': product['image'],
-            'quantity': 1  # Default quantity to 1 for "Buy Now"
-        }
-        return redirect(url_for('payment')) 
+@app.route('/checkout')
+def checkout_page():
+    if 'checkout_item' in session:
+        items = [session['checkout_item']]
+        total = session['checkout_item']['price'] * session['checkout_item']['quantity']
+    elif 'cart' in session and session['cart']:
+        items = session['cart']
+        total = sum(item['price'] * item['quantity'] for item in items)
     else:
-        flash("Product not found.")
-        return redirect(url_for('product_page', product_id=product_id))
+        flash("Your cart is empty.")
+        return redirect(url_for('view_cart'))
 
+    return render_template('checkout.html', items=items, total=total)
+
+@app.route('/place_order', methods=['POST'])
+def place_order():
+    if 'shipping_address' in session:
+        email = session['shipping_address'].get('email')
+        name = session['shipping_address'].get('name')
+        address = session['shipping_address'].get('address')
+        city = session['shipping_address'].get('city')
+        pincode = session['shipping_address'].get('pincode')
+
+        if email:
+            try:
+                msg = Message('Order Confirmation',
+                            sender='your-gmail@example.com',
+                            recipients=[email])
+                msg.body = f"Dear {name},\n\nYour order has been successfully placed.\n\nShipping to: {address}, {city}, {pincode}\n\nThank you for shopping with us!"
+                mail.send(msg)
+                flash('Confirmation email sent successfully!')
+            except Exception as e:
+                flash(f"Failed to send confirmation email: {str(e)}")
+
+    flash('Your order has been placed successfully!')
+    session.pop('cart', None)
+    session.pop('checkout_item', None)
+
+    return redirect(url_for('order_success'))
 
 @app.route('/process_paypal', methods=['POST'])
 def process_paypal():
@@ -577,45 +818,12 @@ def process_paypal():
         flash("There was an error with your order. Please try again.")
         return redirect(url_for('payment'))
 
-
 @app.route('/process_cod', methods=['POST'])
 def process_cod():
-    if 'cart' in session and 'shipping_address' in session:
-
-        session.pop('cart', None)
-        flash("Order placed successfully with Cash on Delivery.")
-        return redirect(url_for('order_success'))
-    else:
-        flash("There was an error with your order. Please try again.")
-        return redirect(url_for('payment'))
-
-@app.route('/order_success')
-def order_success():
-    return render_template('order_success.html')
-
-def create_order(amount, currency="INR", receipt=None, notes=None):
-    try:
-        order = razorpay_client.order.create({
-            "amount": amount,  
-            "currency": currency,
-            "receipt": receipt,
-            "notes": notes,
-        })
-        return order
-    except Exception as e:
-        return {"error": str(e)}
-
-def verify_payment_signature(payment_id, order_id, signature):
-    try:
-        payload = f"{order_id}|{payment_id}"
-        generated_signature = hmac.new(
-            RAZORPAY_KEY_SECRET.encode(),
-            payload.encode(),
-            hashlib.sha256
-        ).hexdigest()
-        return generated_signature == signature
-    except Exception as e:
-        return False
+    session.pop('cart', None)
+    session.pop('checkout_item', None)
+    
+    return redirect(url_for('order_success'))
 
 @app.route('/create_order', methods=['POST'])
 def handle_create_order():
@@ -634,9 +842,18 @@ def handle_create_order():
 
     return jsonify(order), 200
 
+@app.route('/verify_razorpay_payment', methods=['POST'])
+def verify_razorpay_payment():
+    payment_data = request.get_json()
+    
+    session.pop('cart', None)
+    session.pop('checkout_item', None)
+    
+    return jsonify({'success': True, 'redirect': url_for('order_success')})
+
 @app.route('/payment_success', methods=['POST'])
 def handle_payment_success():
-    data = request.form  
+    data = request.form
     payment_id = data.get('razorpay_payment_id')
     order_id = data.get('razorpay_order_id')
     signature = data.get('razorpay_signature')
@@ -646,10 +863,19 @@ def handle_payment_success():
 
     is_valid = verify_payment_signature(payment_id, order_id, signature)
     if is_valid:
-       
-        return render_template('order.success.html', payment_id=payment_id, order_id=order_id)
+        return render_template('order_success.html', payment_id=payment_id, order_id=order_id)
     else:
         return jsonify({"status": "error", "message": "Invalid signature"}), 400
 
+@app.route('/payment-success')
+def payment_success():
+    return redirect(url_for('order_success'))
+
+@app.route('/order-success')
+def order_success():
+    return render_template('order_success.html')
+
+# Main Execution
+# --------------------------------------
 if __name__ == '__main__':
     app.run(debug=True)

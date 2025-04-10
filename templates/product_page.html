@@ -198,8 +198,8 @@
                 </div>
 
                 <div class="cart-and-buy">
-                    <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="POST">
-                        <button type="submit" class="cart-button">Add to Cart</button>
+                    <form action="{{ url_for('add_to_cart', product_id=product['id']) }}" method="POST">
+                        <button type="submit" class="btn btn-primary">Add to Cart</button>
                     </form>
                     <form action="{{ url_for('buy_now', product_id=product.id) }}" method="POST">
                         <button type="submit" class="buy-button">Buy Now</button>

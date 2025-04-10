@@ -176,8 +176,9 @@
             {% endif %}
 
             <!-- Total Price -->
+            <!-- In payment.html -->
             <div class="cart-total">
-                Total: ${{ "%.2f"|format(total) }}
+                Total: ${{ "%.2f"|format(total|default(0)) }}
             </div>
         </div>
 
@@ -197,6 +198,8 @@
             </div>
 
             <!-- Cash on Delivery Option -->
+            <!-- Cash on Delivery Option -->
+            <!-- Cash on Delivery Option (Simplified) -->
             <div class="payment-option">
                 <h2>Cash on Delivery (COD)</h2>
                 <form action="{{ url_for('process_cod') }}" method="POST">
@@ -217,92 +220,65 @@
 
     <!-- Razorpay Payment Button Configuration -->
     <script>
-        document.getElementById('razorpay-button').onclick = function (e) {
+        // Razorpay handler
+        document.getElementById('razorpay-button').onclick = function(e) {
             e.preventDefault();
-
-            // Create an order by calling your backend order creation route
+            
             fetch('/create_razorpay_order', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    amount: '{{ total * 100 }}',  // Razorpay expects amount in paisa, multiply by 100
-                    currency: 'INR'
-                })
-            }).then(function (response) {
-                return response.json();
-            }).then(function (orderData) {
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({amount: '{{ total * 100 }}', currency: 'INR'})
+            })
+            .then(response => response.json())
+            .then(orderData => {
                 var options = {
-                    "key": "{{ RAZORPAY_KEY_ID }}", // Enter your Razorpay Key ID
-                    "amount": orderData.amount,
-                    "currency": "INR",
-                    "name": "Your Company Name",
-                    "description": "Test Transaction",
-                    "image": "/your_logo.png",
-                    "order_id": orderData.id, // Razorpay Order ID
-                    "handler": function (response) {
-                        // After payment is successful, call the backend to verify the payment
+                    key: "{{ RAZORPAY_KEY_ID }}",
+                    amount: orderData.amount,
+                    currency: "INR",
+                    name: "Your Store",
+                    order_id: orderData.id,
+                    handler: function(response) {
                         fetch('/verify_razorpay_payment', {
                             method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
+                            headers: {'Content-Type': 'application/json'},
                             body: JSON.stringify({
                                 razorpay_payment_id: response.razorpay_payment_id,
                                 razorpay_order_id: response.razorpay_order_id,
                                 razorpay_signature: response.razorpay_signature
                             })
-                        }).then(function (paymentResponse) {
-                            return paymentResponse.json();
-                        }).then(function (paymentResult) {
-                            if (paymentResult.success) {
-                                alert("Payment successful");
-                                window.location.href = "/payment-success";
-                            } else {
-                                alert("Payment failed");
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                            if(data.success) {
+                                window.location.href = data.redirect; // Redirect to success page
                             }
                         });
-                    },
-                    "prefill": {
-                        "name": "John Doe",
-                        "email": "john@example.com",
-                        "contact": "9999999999"
-                    },
-                    "theme": {
-                        "color": "#3399cc"
                     }
                 };
                 var rzp1 = new Razorpay(options);
                 rzp1.open();
-            }).catch(function (error) {
-                console.error('Error:', error);
             });
         };
-    </script>
 
-    <!-- PayPal SDK script -->
-    <script src="https://www.paypal.com/sdk/js?client-id=sb&currency=USD"></script>
-
-    <!-- PayPal Button Configuration -->
-    <script>
+        // PayPal handler
         paypal.Buttons({
-            // Set up the transaction
             createOrder: function(data, actions) {
                 return actions.order.create({
                     purchase_units: [{
-                        amount: {
-                            value: '{{ "%.2f"|format(total) }}'  // Dynamic total from backend
-                        }
+                        amount: {value: '{{ "%.2f"|format(total) }}'}
                     }]
                 });
             },
-
-            // Finalize the transaction after the payment is authorized
             onApprove: function(data, actions) {
                 return actions.order.capture().then(function(details) {
-                    alert('Transaction completed by ' + details.payer.name.given_name);
-                    window.location.href = "/payment-success";
+                    fetch('/process_paypal', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify(details)
+                    })
+                    .then(() => {
+                        window.location.href = "/order_success"; // Explicit redirect
+                    });
                 });
             }
         }).render('#paypal-button-container');
