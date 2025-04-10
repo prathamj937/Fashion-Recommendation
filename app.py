@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, session, redirect, flash, url_for, jsonify,send_from_directory
+from flask import Flask, render_template, request, session, redirect, flash, url_for, jsonify, send_from_directory
 import os
 import cv2
 import numpy as np
@@ -15,36 +15,35 @@ import hmac
 import hashlib
 import tensorflow as tf
 import tf2onnx
+import mediapipe as mp
 
-
-
+# Razorpay credentials
 RAZORPAY_KEY_ID = "rzp_test_thbnstH0BXXXX"
 RAZORPAY_KEY_SECRET = "oc86adrgm685ECs3WzdXXXX"
-
 razorpay_client = razorpay.Client(auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET))
 
+# Flask app setup
 app = Flask(__name__)
 
-
+# MySQL configuration
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = 'Messipratham30'
 app.config['MYSQL_DB'] = 'clothing_recommendations'
-
 mysql = MySQL(app)
 
+# Secret key and mail configuration
 app.secret_key = os.urandom(24)
-
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USERNAME'] = ''
 app.config['MAIL_PASSWORD'] = ''
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
-
 mail = Mail(app)
 s = URLSafeTimedSerializer(app.secret_key)
 
+# Upload folder setup
 UPLOAD_FOLDER = 'static/uploads'
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
@@ -52,52 +51,73 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
+# Initialize MediaPipe models
+mp_face_mesh = mp.solutions.face_mesh
+mp_pose = mp.solutions.pose
+face_mesh = mp_face_mesh.FaceMesh(max_num_faces=1)
+pose = mp_pose.Pose()
+
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+# Updated Analysis Functions
 def analyze_hair(image):
-    time.sleep(3)
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-
     face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
     faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(50, 50))
-
+    
     if len(faces) == 0:
         return "Face not detected"
+    
+    (x, y, w, h) = max(faces, key=lambda f: f[2] * f[3])  # Largest face
+    hair_region = image[max(0, y - h // 2):y, max(0, x - w // 4):x + w + w // 4]
+    
+    if hair_region.size == 0:
+        return "Hair not detected"
+    
+    edges = cv2.Canny(hair_region, 50, 150)
+    hair_edge_count = np.sum(edges > 0)
+    
+    threshold = 10000  # Adjusted based on testing
+    return "Long Hair" if hair_edge_count > threshold else "Short Hair"
 
-    x, y, w, h = max(faces, key=lambda f: f[2] * f[3]) 
-
-    hair_region = image[y + h : y + h + h//2, x : x + w]  
-
-    hair_gray = cv2.cvtColor(hair_region, cv2.COLOR_BGR2GRAY)
-    edges = cv2.Canny(hair_gray, 50, 150)
-
-    hair_edge_count = np.sum(edges)
-
-    if hair_edge_count > 50000:  
-        return "Long Hair"
-    else:
-        return "Short Hair"
 def analyze_face(image):
-    time.sleep(3)
-    height, width, _ = image.shape
-    aspect_ratio = width / height
-    if aspect_ratio > 1.2:
+    rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    results = face_mesh.process(rgb_image)
+    
+    if not results.multi_face_landmarks:
+        return "Face not detected"
+    
+    landmarks = results.multi_face_landmarks[0].landmark
+    chin_y = landmarks[152].y  # Bottom of chin
+    forehead_y = landmarks[10].y  # Top of forehead
+    face_width = abs(landmarks[234].x - landmarks[454].x)  # Cheek-to-cheek
+    face_height = abs(chin_y - forehead_y)
+    
+    ratio = face_width / face_height
+    if ratio > 1.1:
         return "Oval Face"
-    elif aspect_ratio > 0.9:
+    elif ratio > 0.9:
         return "Round Face"
-    else:
-        return "Square Face"
+    return "Square Face"
 
 def analyze_body(image):
-    time.sleep(3)
-    height, width, _ = image.shape
-    if height > width * 1.3:
-        return "Rectangular Body"
-    elif width > height * 1.1:
-        return "Pear-Shaped Body"
-    else:
+    rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    results = pose.process(rgb_image)
+    
+    if not results.pose_landmarks:
+        return "Body not detected"
+    
+    landmarks = results.pose_landmarks.landmark
+    shoulder_width = abs(landmarks[11].x - landmarks[12].x)  # Left to right shoulder
+    waist_width = abs(landmarks[23].x - landmarks[24].x)    # Left to right hip (approx. waist)
+    hip_width = abs(landmarks[25].x - landmarks[26].x)      # Left to right hip
+    
+    if shoulder_width > hip_width * 1.1:
         return "Inverted Triangle Body"
+    elif hip_width > shoulder_width * 1.1:
+        return "Pear-Shaped Body"
+    return "Rectangular Body"
 
 @app.route('/', methods=['GET', 'POST'])
 def login():
@@ -631,9 +651,7 @@ def handle_payment_success():
     else:
         return jsonify({"status": "error", "message": "Invalid signature"}), 400
 
-
-
-
 if __name__ == '__main__':
     app.run(debug=True)
 
+aa
